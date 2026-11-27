@@ -445,6 +445,17 @@ const THEORY = [
    Servono: Public Key, Service ID, Template ID (https://www.emailjs.com/). */
 const EMAILJS = { publicKey:'', serviceId:'', templateId:'', enabled:false };
 
+/* URL del Worker Cloudflare che espone il database D1.
+   Lascia vuoto per usare solo il salvataggio locale; inserisci l'URL
+   (es. https://cruciverba-medioevo-api.<tuo-subdomain>.workers.dev) dopo il deploy. */
+const API_BASE = '';
+async function api(path,options){
+  if(!API_BASE)throw new Error('API non configurata');
+  const res=await fetch(API_BASE+path,options);
+  if(!res.ok)throw new Error('HTTP '+res.status);
+  return res.json();
+}
+
 /* =========================================================
    2. GENERATORE DEL CRUCIVERBA
    ========================================================= */
@@ -881,11 +892,26 @@ async function sendCertificateEmail(pdf,data){
    ========================================================= */
 const HIST_KEY=STORE+'.history';
 function getHistory(){try{return JSON.parse(localStorage.getItem(HIST_KEY)||'[]');}catch(e){return [];}}
-function saveResult(d){const h=getHistory();h.unshift(d);localStorage.setItem(HIST_KEY,JSON.stringify(h.slice(0,50)));}
-function renderHistory(){
-  const h=getHistory(), body=document.getElementById('historyBody');
-  if(!h.length){body.innerHTML='<p style="font-size:14px;color:var(--muted)">Nessun risultato salvato. Completa una verifica per vedere qui lo storico.</p>';return;}
-  body.innerHTML='<div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:12.5px">'+
+async function saveResult(d){
+  const h=getHistory();h.unshift(d);localStorage.setItem(HIST_KEY,JSON.stringify(h.slice(0,50)));
+  if(API_BASE&&user){
+    try{
+      await api('/api/risultati',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+    }catch(e){/* offline: il risultato resta salvato nel browser */}
+  }
+}
+async function renderHistory(){
+  let h=getHistory(), source='Salvato in questo browser';
+  if(API_BASE&&user){
+    try{
+      const r=await api('/api/risultati?email='+encodeURIComponent(user.email));
+      h=r.risultati||[];source='Database Cloudflare D1';
+    }catch(e){/* fallback ai dati locali */}
+  }
+  const body=document.getElementById('historyBody');
+  const badge='<p style="margin:0 0 10px;font-size:11px;color:var(--muted)">Fonte: <b>'+source+'</b></p>';
+  if(!h.length){body.innerHTML=badge+'<p style="font-size:14px;color:var(--muted)">Nessun risultato salvato. Completa una verifica per vedere qui lo storico.</p>';return;}
+  body.innerHTML=badge+'<div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:12.5px">'+
     '<thead><tr style="background:var(--parchment)"><th style="padding:7px;text-align:left">Data</th><th style="padding:7px;text-align:left">Studente</th><th style="padding:7px;text-align:left">Modalità</th><th style="padding:7px">Tempo</th><th style="padding:7px">%</th><th style="padding:7px">Voto</th></tr></thead><tbody>'+
     h.map(r=>'<tr style="border-bottom:1px solid var(--line)"><td style="padding:7px">'+(r.data||'')+'</td><td style="padding:7px">'+(r.nome||'')+'<br><small style="color:var(--muted)">'+(r.email||'')+'</small></td><td style="padding:7px">'+(r.modalita||'')+'</td><td style="padding:7px;text-align:center">'+(r.tempo||'')+'</td><td style="padding:7px;text-align:center">'+(r.percentuale||'')+'</td><td style="padding:7px;text-align:center;font-weight:700">'+(r.voto||'')+'</td></tr>').join('')+
     '</tbody></table></div>';
@@ -893,7 +919,12 @@ function renderHistory(){
 document.getElementById('historyBtn').addEventListener('click',()=>{renderHistory();document.getElementById('historyDialog').showModal();});
 document.getElementById('closeHistory').addEventListener('click',()=>document.getElementById('historyDialog').close());
 document.getElementById('okHistory').addEventListener('click',()=>document.getElementById('historyDialog').close());
-document.getElementById('clearHistory').addEventListener('click',()=>{localStorage.removeItem(HIST_KEY);renderHistory();});
+document.getElementById('clearHistory').addEventListener('click',async()=>{
+  if(API_BASE&&user){
+    try{await api('/api/risultati?email='+encodeURIComponent(user.email),{method:'DELETE'});}catch(e){}
+  }
+  localStorage.removeItem(HIST_KEY);renderHistory();
+});
 
 /* =========================================================
    11. PDF DEL CRUCIVERBA (A4) E STAMPA

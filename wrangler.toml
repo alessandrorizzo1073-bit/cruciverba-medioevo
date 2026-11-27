@@ -1,0 +1,10 @@
+name = "cruciverba-medioevo-api"
+main = "worker.js"
+compatibility_date = "2026-11-27"
+
+# Sostituisci DATABASE_ID con quello restituito da:
+#   npx wrangler d1 create cruciverba-medioevo-db
+[[d1_databases]]
+binding = "DB"
+database_name = "cruciverba-medioevo-db"
+database_id = "SOSTITUISCI_CON_IL_DATABASE_ID"

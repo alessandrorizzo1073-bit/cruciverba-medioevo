@@ -54,7 +54,53 @@ const EMAILJS = {
 
 Il piano gratuito EmailJS ha un numero limitato di invii mensili: per un uso in classe con molti studenti potrebbe essere necessario un piano superiore.
 
+## Database Cloudflare (D1 + Worker)
+
+Lo storico risultati può essere salvato su **Cloudflare D1** invece che solo nel browser. Il sito funzira comunque senza database (fallback a `localStorage`).
+
+### File inclusi
+
+- `schema.sql` — tabella `risultati` (nome, email, data, modalità, tempo, percentuale, voto).
+- `worker.js` — API REST con CORS: `POST /api/risultati`, `GET /api/risultati?email=...`, `DELETE /api/risultati?email=...`, `GET /api/health`.
+- `wrangler.toml` — configurazione del Worker e del binding D1.
+
+### Deploy (da eseguire tu, serve un account Cloudflare)
+
+```bash
+# 1. Login
+npx wrangler login
+
+# 2. Crea il database D1 e copia il database_id stampato
+npx wrangler d1 create cruciverba-medioevo-db
+
+# 3. Incolla il database_id in wrangler.toml al posto di SOSTITUISCI_CON_IL_DATABASE_ID
+
+# 4. Crea la tabella (produzione)
+npx wrangler d1 execute cruciverba-medioevo-db --remote --file=schema.sql
+
+# 5. Deploy del Worker
+npx wrangler deploy
+```
+
+Wrangler stamperà l'URL del Worker, per esempio:
+`https://cruciverba-medioevo-api.<tuo-subdomain>.workers.dev`
+
+### Collegamento del sito al database
+
+In `index.html`, all'inizio del blocco `<script>`, imposta:
+
+```js
+const API_BASE = 'https://cruciverba-medioevo-api.<tuo-subdomain>.workers.dev';
+```
+
+Poi fai commit e push: il sito su GitHub Pages userà Cloudflare D1. Se l'URL non è raggiungibile, lo storico continua a usare i dati salvati nel browser.
+
+> Nota: non è stato possibile creare il database in questo ambiente perché non sono disponibili credenziali Cloudflare (`CLOUDFLARE_API_TOKEN` / wrangler autenticato). I file sono pronti per il deploy con i comandi sopra.
+
 ## Struttura file
 
 - `index.html` — applicazione completa (HTML, CSS e JS inclusi).
+- `worker.js` — API Cloudflare Worker.
+- `schema.sql` — schema del database D1.
+- `wrangler.toml` — configurazione Worker + D1.
 - `README.md` — queste istruzioni.
