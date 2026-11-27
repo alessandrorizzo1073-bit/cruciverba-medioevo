@@ -1210,22 +1210,24 @@ function confetti(){
   document.body.appendChild(box);setTimeout(()=>box.remove(),4800);
 }
 
-/* Accesso automatico: usa l'utente salvato oppure un profilo demo.
-   Il modulo di login resta disponibile dopo "Esci dall'account". */
-const DEMO_USER={name:'Alessandro',surname:'Rizzo',email:'alessandro@example.it'};
+/* All'apertura dal link si parte sempre dalla schermata di login.
+   Se l'utente è già stato riconosciuto (login od ospite), il ricaricamento
+   dopo la scelta della materia non richiede di nuovo i dati. */
 let savedUser=null;
 try{savedUser=JSON.parse(localStorage.getItem(STORE+'.user')||'null');}catch(e){}
-user=(savedUser&&savedUser.email)?savedUser:DEMO_USER;
-localStorage.setItem(STORE+'.user',JSON.stringify(user));
-document.getElementById('nome').value=user.name;
-document.getElementById('cognome').value=user.surname;
-document.getElementById('email').value=user.email;
-document.getElementById('subjectGreeting').textContent='Benvenuto, '+user.name+'! Seleziona un percorso per iniziare.';
-document.getElementById('modeGreeting').textContent='Benvenuto, '+user.name+'! Scegli la modalità.';
+user=(savedUser&&savedUser.email)?savedUser:null;
+if(user){
+  document.getElementById('nome').value=user.name;
+  document.getElementById('cognome').value=user.surname;
+  document.getElementById('email').value=user.email;
+  document.getElementById('subjectGreeting').textContent='Benvenuto, '+user.name+'! Seleziona un percorso per iniziare.';
+  document.getElementById('modeGreeting').textContent='Benvenuto, '+user.name+'! Scegli la modalità.';
+}
 document.getElementById('subjectLabel').textContent=DATA.emoji+' Percorso selezionato: '+DATA.name;
 document.title='Cruciverba · '+DATA.name+' · Accademia del Sapere';
-const hasSubject=Boolean(params.get('subject')||localStorage.getItem(STORE+'.subject'));
-showScreen(params.get('choose')==='1'||!hasSubject?'subjectScreen':'modeScreen');
+if(user&&params.get('subject'))showScreen('modeScreen');
+else if(user&&params.get('choose')==='1')showScreen('subjectScreen');
+else showScreen('loginScreen');
 </script>
 </body>
 </html>

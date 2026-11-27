@@ -9,7 +9,7 @@ Applicazione web didattica in **HTML, CSS e JavaScript vanilla** (nessun framewo
 - Percorsi: 15 parole e 10 argomenti di teoria per il Medioevo; 15 parole e 12 argomenti di teoria per la Filosofia Greca.
 - Attestati differenziati: "Esperto del Medioevo" oppure "Esperto di Filosofia Greca".
 - **Attestato speciale** "Studioso di Storia e Filosofia" se si ottiene almeno 8/10 in entrambi i percorsi.
-- **Accesso automatico** con profilo demo; il pulsante «Esci dall'account» riporta al modulo di login.
+- All'apertura dal link compare sempre la **schermata di login** (o il pulsante ospite); il pulsante «Esci dall'account» riporta al login.
 - Pulsante **👤 Entra come ospite** (nel login e nella schermata materie): si gioca senza inserire dati.
 - Ogni accesso parte sempre da un **cruciverba vuoto**; i progressi non vengono ripristinati automaticamente.
 - **Modalità Studio**: definizioni, teoria (10 argomenti), suggerimento, controllo, soluzione e correzione degli errori.
