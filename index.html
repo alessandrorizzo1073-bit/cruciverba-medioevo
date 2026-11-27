@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cruciverba del Medioevo · Accademia Medievale</title>
+<style>
+  :root{
+    --navy:#142945;
+    --navy-2:#1d3c63;
+    --gold:#c9a227;
+    --gold-light:#f0d98a;
+    --parchment:#f6ead0;
+    --parchment-2:#efe0bd;
+    --brown:#8a6b45;
+    --ink:#22354c;
+    --muted:#6b7b8c;
+    --line:#cbb88f;
+    --green:#16803f;
+    --green-bg:#d8f2df;
+    --red:#b92929;
+    --red-bg:#f9dedb;
+    --hint-bg:#e4efff;
+    --white:#fffdf8;
+    --shadow:0 18px 44px rgba(20,41,69,.18);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;min-height:100vh;color:var(--ink);
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:
+      radial-gradient(circle at 10% 5%,rgba(255,255,255,.5),transparent 35%),
+      radial-gradient(circle at 90% 95%,rgba(255,255,255,.35),transparent 40%),
+      linear-gradient(135deg,#1a3355 0%,#24466e 45%,#12243c 100%);
+  }
+  .screen{display:none;animation:fade .4s ease}
+  .screen.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  @keyframes confetti{0%{transform:translateY(-10vh) rotate(0);opacity:1}100%{transform:translateY(105vh) rotate(720deg);opacity:0}}
+
+  /* ---------- Login ---------- */
+  .login-wrap{min-height:100vh;display:grid;place-items:center;padding:22px}
+  .login-card{
+    width:min(460px,100%);padding:34px;border-radius:20px;
+    background:linear-gradient(160deg,var(--white),var(--parchment));
+    border:1px solid var(--gold);box-shadow:var(--shadow);text-align:center;
+  }
+  .logo{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:6px}
+  .logo svg{width:58px;height:66px;filter:drop-shadow(0 5px 8px rgba(20,41,69,.22));animation:float 4s ease-in-out infinite}
+  .brand{font:700 26px Georgia,"Times New Roman",serif;color:var(--navy);letter-spacing:.3px}
+  .brand span{display:block;font:400 11px "Segoe UI",sans-serif;letter-spacing:3px;color:var(--brown);text-transform:uppercase;margin-top:3px}
+  .login-card h1{font:700 23px Georgia,serif;color:var(--navy);margin:18px 0 4px}
+  .login-card .sub{color:var(--muted);font-size:13px;margin:0 0 24px}
+  .field{text-align:left;margin-bottom:15px}
+  .field label{display:block;font-size:12px;font-weight:700;color:var(--navy-2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px}
+  .field input{
+    width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;
+    background:#fff;font:inherit;font-size:15px;color:var(--ink);outline:none;transition:border .15s,box-shadow .15s;
+  }
+  .field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,39,.18)}
+  .field input.invalid{border-color:var(--red);background:#fff6f5}
+  .err{display:none;color:var(--red);font-size:12px;margin-top:5px}
+  .err.show{display:block}
+  .btn{
+    font:inherit;font-weight:700;font-size:14px;padding:12px 20px;border-radius:10px;
+    border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .12s,background .12s;
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(20,41,69,.18)}
+  .btn:active{transform:none}
+  .btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+  .btn.gold{background:linear-gradient(180deg,#e3c25c,var(--gold));border-color:#a8861c;color:#2a2107;width:100%;font-size:16px;padding:14px}
+  .btn.navy{background:linear-gradient(180deg,#2b5688,var(--navy-2));border-color:var(--navy);color:#fff}
+  .btn.ghost{background:#fff;border-color:var(--line);color:var(--navy)}
+  .btn.ghost:hover{background:var(--parchment)}
+  .hintline{margin-top:18px;font-size:11px;color:var(--muted)}
+
+  /* ---------- Scelta modalità ---------- */
+  .mode-wrap{min-height:100vh;display:grid;place-items:center;padding:22px}
+  .mode-card{width:min(760px,100%);text-align:center;padding:34px;background:linear-gradient(160deg,var(--white),var(--parchment));border:1px solid var(--gold);border-radius:20px;box-shadow:var(--shadow)}
+  .mode-card h1{font:700 30px Georgia,serif;color:var(--navy);margin:14px 0 6px}
+  .mode-card p{color:var(--muted);margin:0 0 26px}
+  .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .mode-btn{
+    border:2px solid var(--gold);border-radius:16px;background:linear-gradient(160deg,#fff,var(--parchment));
+    padding:26px 18px;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s;text-align:center;
+  }
+  .mode-btn:hover{transform:translateY(-4px);box-shadow:0 14px 26px rgba(20,41,69,.2);background:#fff}
+  .mode-btn .ico{font-size:44px;display:block;margin-bottom:10px}
+  .mode-btn strong{display:block;font:700 18px Georgia,serif;color:var(--navy);letter-spacing:.5px}
+  .mode-btn small{display:block;color:var(--muted);margin-top:7px;font-size:12px}
+
+  /* ---------- App ---------- */
+  .page{max-width:1280px;margin:0 auto;padding:20px 16px 40px}
+  .app-header{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    padding:16px 20px;border-radius:16px;border:1px solid var(--gold);
+    background:linear-gradient(100deg,var(--navy),var(--navy-2));color:#fff;box-shadow:var(--shadow);
+  }
+  .app-header .logo{justify-content:flex-start;margin:0}
+  .app-header .brand{color:#fff}
+  .app-header .brand span{color:var(--gold-light)}
+  .user-chip{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .badge{font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25)}
+  .badge.study{background:rgba(22,128,63,.28)}
+  .badge.verify{background:rgba(201,162,39,.25)}
+  .app-header .btn{padding:8px 14px;font-size:12px;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3);color:#fff}
+  .toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;margin:14px 0;padding:14px 16px;background:var(--white);border:1px solid var(--line);border-radius:14px}
+  .stats{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .stats strong{font-variant-numeric:tabular-nums;color:var(--navy);background:var(--parchment);border:1px solid var(--line);padding:4px 10px;border-radius:20px}
+  .track{width:160px;height:9px;background:#e7dcc3;border-radius:20px;overflow:hidden}
+  #bar{height:100%;width:0;background:linear-gradient(90deg,var(--gold),#e8c96a);transition:width .3s}
+  .timer{font:700 18px Consolas,monospace;color:var(--navy);background:var(--parchment);padding:5px 12px;border-radius:10px;border:1px solid var(--line)}
+  .actions{display:flex;flex-wrap:wrap;gap:9px}
+  .actions .btn{padding:9px 14px;font-size:13px}
+  .actions .btn.gold{width:auto;font-size:13px;padding:9px 14px}
+  .only-study.hidden,.only-verify.hidden{display:none}
+  .message{display:none;margin:0 0 14px;padding:12px 16px;border-radius:11px;font-size:14px;font-weight:600;border:1px solid transparent}
+  .message.show{display:block}
+  .message.info{background:#eaf2ff;border-color:#b9d3f5;color:#1c5aa8}
+  .message.warn{background:#fff3d6;border-color:#e7be63;color:#7d5a00}
+  .message.ok{background:var(--green-bg);border-color:#8fce9f;color:var(--green)}
+  .message.bad{background:var(--red-bg);border-color:#e5a19b;color:var(--red)}
+
+  .layout{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:18px;align-items:start}
+  .card{min-width:0;background:var(--white);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+  .card-title{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff9ea,transparent);font:700 19px Georgia,serif;color:var(--navy)}
+  .card-title .hint{font:400 11px "Segoe UI",sans-serif;color:var(--muted)}
+  .grid-scroll{overflow:auto;padding:18px}
+  .grid{display:grid;grid-template-columns:repeat(var(--cols),var(--cell));gap:2px;width:max-content;margin:0 auto;padding:6px;border-radius:10px;background:rgba(201,162,39,.14)}
+  .cell{position:relative;width:var(--cell);height:var(--cell);background:#fff;border:1px solid #d9cba9;border-radius:4px;transition:background .12s,box-shadow .12s}
+  .cell.blank{background:transparent;border-color:transparent}
+  .cell .num{position:absolute;top:1px;left:2px;font-size:9px;line-height:1;color:var(--brown);pointer-events:none;user-select:none}
+  .cell input{width:100%;height:100%;padding:0;border:0;outline:0;background:transparent;text-align:center;text-transform:uppercase;font:700 calc(var(--cell)*.6) Georgia,serif;color:var(--navy);caret-color:var(--gold)}
+  .cell.active{background:#fff0c4;box-shadow:inset 0 0 0 2px var(--gold)}
+  .cell.correct{background:var(--green-bg)} .cell.correct input{color:var(--green)}
+  .cell.wrong{background:var(--red-bg)} .cell.wrong input{color:var(--red)}
+  .cell.missing{background:#fff7e4;box-shadow:inset 0 0 0 2px #e8c96a}
+  .cell.revealed{background:#f4e6b8} .cell.revealed input{color:#8a6b12}
+  .cell.hint-shown{background:var(--hint-bg)} .cell.hint-shown input{color:#1c5aa8}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;padding:12px 18px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .legend i{width:12px;height:12px;border-radius:3px;border:1px solid rgba(0,0,0,.1);display:inline-block}
+  .sw-g{background:var(--green-bg)} .sw-r{background:var(--red-bg)} .sw-m{background:#fff7e4} .sw-h{background:var(--hint-bg)}
+
+  .clue-section{padding:14px 18px}.clue-section+.clue-section{border-top:1px solid var(--line)}
+  .clue-section h3{margin:0 0 9px;font:700 16px Georgia,serif;color:var(--brown);letter-spacing:.4px}
+  .clue-list{list-style:none;margin:0;padding:0;max-height:320px;overflow:auto}
+  .clue-list li{display:flex;gap:7px;align-items:flex-start;padding:7px 9px;margin-bottom:4px;border-radius:9px;border-left:3px solid transparent;font-size:13px;line-height:1.4;cursor:pointer}
+  .clue-list li:hover{background:#fff5de}
+  .clue-list li.current{background:#fff0c4;border-left-color:var(--gold)}
+  .clue-list li.solved{color:var(--green)}
+  .clue-text{flex:1;min-width:0}
+  .clue-num{font-weight:700;color:var(--brown);min-width:19px}
+  .clue-len{color:var(--muted);white-space:nowrap}
+  .clue-list li.clue-wrong,.clue-list li.clue-wrong .clue-num,.clue-list li.clue-wrong .clue-len,.clue-list li.clue-wrong .clue-text{background:var(--red-bg);border-left-color:var(--red);color:var(--red);font-weight:700}
+
+  /* ---------- Dialoghi ---------- */
+  dialog{border:1px solid var(--gold);border-radius:18px;padding:0;background:linear-gradient(160deg,var(--white),var(--parchment));color:var(--ink);box-shadow:var(--shadow);max-width:94vw}
+  dialog::backdrop{background:rgba(10,23,40,.65);backdrop-filter:blur(3px)}
+  .dlg-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line);background:linear-gradient(100deg,#fff6df,transparent)}
+  .dlg-head h2{margin:0;font:700 21px Georgia,serif;color:var(--navy)}
+  .x-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:15px;color:var(--navy)}
+  .x-btn:hover{background:var(--parchment)}
+  .dlg-body{padding:18px 20px;max-height:65vh;overflow:auto}
+  .dlg-foot{padding:0 20px 20px;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+  .theory-list{display:grid;gap:9px}
+  .theory-list details{border:1px solid var(--line);border-radius:11px;background:#fff;overflow:hidden}
+  .theory-list summary{cursor:pointer;padding:12px 14px;font-weight:700;color:var(--navy);font-size:14px;list-style:none}
+  .theory-list summary::-webkit-details-marker{display:none}
+  .theory-list summary:before{content:"▸ ";color:var(--gold)}
+  .theory-list details[open] summary:before{content:"▾ "}
+  .theory-list p{margin:0;padding:0 14px 14px;font-size:13.5px;line-height:1.65;color:#3d4d60;white-space:pre-line}
+  .result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:11px;margin-bottom:14px}
+  .result-grid div{background:#fff;border:1px solid var(--line);border-radius:11px;padding:12px;text-align:center}
+  .result-grid b{display:block;font:700 24px Georgia,serif;color:var(--navy)}
+  .result-grid span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+  .vote-box{text-align:center;padding:14px;border-radius:14px;background:linear-gradient(100deg,#fff2c9,#fff9ea);border:1px solid var(--gold);margin-bottom:12px}
+  .vote-box b{font:700 42px Georgia,serif;color:var(--navy)}
+  .vote-box small{display:block;color:var(--brown);font-size:12px}
+  .status{font-size:13px;padding:11px 13px;border-radius:10px;background:#eef4fb;border:1px solid #bcd4ef;margin-top:12px}
+  .wrong-title{margin:16px 0 8px;font:700 16px Georgia,serif;color:var(--red)}
+  .wrong-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+  .wrong-list li{background:var(--red-bg);border:1px solid #e5a19b;border-left:4px solid var(--red);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.5}
+  .wrong-list b{color:var(--red)}
+  .wrong-list span{color:var(--ink)}
+  .wrong-list em{color:var(--brown)}
+  .confetti{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:99}
+  .confetti i{position:absolute;top:-20px;width:9px;height:14px;opacity:.9;animation:confetti 2.8s linear forwards}
+  .congrats-dialog{width:min(440px,94vw);text-align:center}
+  .congrats-dialog .big{font-size:56px;animation:float 2.5s ease-in-out infinite}
+  .congrats-dialog h2{font:700 25px Georgia,serif;color:var(--navy);margin:8px 0}
+  .congrats-dialog p{color:var(--muted);font-size:14px}
+  .app-footer{text-align:center;margin-top:20px;font-size:11px;color:rgba(255,255,255,.6)}
+  /* ---------- Stampa A4 ---------- */
+  #printArea{display:none}
+  @media print{
+    @page{size:A4 portrait;margin:12mm}
+    body{background:#fff!important}
+    .screen,dialog,.confetti{display:none!important}
+    #printArea{display:block!important;color:#111;font-family:"Segoe UI",Arial,sans-serif}
+    .print-head{text-align:center;border-bottom:2px solid #142945;padding-bottom:6px;margin-bottom:8px}
+    .print-head h1{margin:0;font:700 20px Georgia,serif;color:#142945}
+    .print-head p{margin:4px 0 0;font-size:10px;color:#333}
+    .print-grid{display:grid;grid-template-columns:repeat(var(--cols),6mm);gap:.4mm;width:max-content;margin:10px auto 12px}
+    .print-cell{width:6mm;height:6mm;border:1px solid #555;position:relative;font-size:3mm;text-align:center;line-height:6mm}
+    .print-cell.blank{border-color:transparent}
+    .print-cell .pn{position:absolute;top:0;left:.4mm;font-size:2mm;line-height:1;color:#444}
+    .print-clues{display:grid;grid-template-columns:1fr 1fr;gap:10mm;font-size:8.5px;line-height:1.4}
+    .print-clues h3{margin:0 0 4px;font:700 11px Georgia,serif;color:#142945}
+    .print-clues ol{margin:0;padding-left:16px}
+    .print-foot{margin-top:14px;border-top:1px solid #142945;padding-top:8px;font-size:10px;display:flex;justify-content:space-between;gap:10mm}
+  }
+  @media(max-width:980px){.layout{grid-template-columns:1fr}.clue-list{max-height:none}}
+  @media(max-width:560px){
+    .page{padding:12px 9px 26px}
+    .login-card,.mode-card{padding:22px}
+    .mode-grid{grid-template-columns:1fr}
+    .app-header{padding:12px}
+    .grid-scroll{padding:10px}
+    .actions .btn{flex:1 1 auto}
+    .track{width:120px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== LOGIN ===================== -->
+<section id="loginScreen" class="screen active">
+  <div class="login-wrap">
+    <form id="loginForm" class="login-card" novalidate>
+      <div class="logo">
+        <svg viewBox="0 0 64 74" aria-hidden="true">
+          <path d="M32 3 L59 13 V40 C59 56 47 67 32 72 C17 67 5 56 5 40 V13 Z" fill="#142945" stroke="#c9a227" stroke-width="3"/>
+          <path d="M32 10 L52 17 V39 C52 51 44 60 32 64 C20 60 12 51 12 39 V17 Z" fill="#f6ead0" stroke="#c9a227" stroke-width="2"/>
+          <path d="M28 20 h8 v12 h12 v8 H36 v12 h-8 V40 H16 v-8 h12 Z" fill="#c9a227"/>
+          <circle cx="32" cy="49" r="2.5" fill="#142945"/>
+        </svg>
+        <div class="brand">Accademia Medievale<span>Cruciverba di storia</span></div>
+      </div>
+      <h1>Inizia il tuo percorso</h1>
+      <p class="sub">Inserisci i tuoi dati per accedere al cruciverba del Medioevo.</p>
+      <div class="field">
+        <label for="nome">Nome</label>
+        <input id="nome" type="text" placeholder="Il tuo nome" autocomplete="given-name">
+        <div class="err" id="nomeErr">Inserisci un nome valido (almeno 2 lettere).</div>
+      </div>
+      <div class="field">
+        <label for="cognome">Cognome</label>
+        <input id="cognome" type="text" placeholder="Il tuo cognome" autocomplete="family-name">
+        <div class="err" id="cognomeErr">Inserisci un cognome valido (almeno 2 lettere).</div>
+      </div>
+      <div class="field">
+        <label for="email">E-mail</label>
+        <input id="email" type="email" placeholder="nome@esempio.it" autocomplete="email">
+        <div class="err" id="emailErr">Inserisci un indirizzo e-mail corretto.</div>
+      </div>
+      <button class="btn gold" type="submit">Continua</button>
+      <div class="hintline">I tuoi progressi vengono salvati automaticamente in questo browser.</div>
+    </form>
+  </div>
+</section>
+
+<!-- ===================== SCELTA MODALITÀ ===================== -->
+<section id="modeScreen" class="screen">
+  <div class="mode-wrap">
+    <div class="mode-card">
+      <div class="logo">
+        <svg viewBox="0 0 64 74" aria-hidden="true"><path d="M32 3 L59 13 V40 C59 56 47 67 32 72 C17 67 5 56 5 40 V13 Z" fill="#142945" stroke="#c9a227" stroke-width="3"/><path d="M32 10 L52 17 V39 C52 51 44 60 32 64 C20 60 12 51 12 39 V17 Z" fill="#f6ead0" stroke="#c9a227" stroke-width="2"/><path d="M28 20 h8 v12 h12 v8 H36 v12 h-8 V40 H16 v-8 h12 Z" fill="#c9a227"/></svg>
+      </div>
+      <h1>Scegli come vuoi giocare</h1>
+      <p id="modeGreeting">Benvenuto!</p>
+      <div class="mode-grid">
+        <button class="mode-btn" id="studyMode" type="button">
+          <span class="ico">📚</span><strong>MODALITÀ STUDIO</strong>
+          <small>Definizioni, teoria, suggerimenti e soluzione. Impara con calma.</small>
+        </button>
+        <button class="mode-btn" id="verifyMode" type="button">
+          <span class="ico">📝</span><strong>MODALITÀ VERIFICA</strong>
+          <small>Solo te e il tempo: niente aiuti. Alla fine ricevi il voto.</small>
+        </button>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px">
+        <button class="btn ghost" id="historyBtn" type="button">🗂 Storico risultati</button>
+        <button class="btn ghost" id="logoutBtn2" type="button">🚪 Esci dall'account</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GIOCO ===================== -->
+<section id="gameScreen" class="screen">
+  <div class="page">
+    <header class="app-header">
+      <div class="logo">
+        <svg viewBox="0 0 64 74" aria-hidden="true"><path d="M32 3 L59 13 V40 C59 56 47 67 32 72 C17 67 5 56 5 40 V13 Z" fill="#142945" stroke="#c9a227" stroke-width="3"/><path d="M32 10 L52 17 V39 C52 51 44 60 32 64 C20 60 12 51 12 39 V17 Z" fill="#f6ead0" stroke="#c9a227" stroke-width="2"/><path d="M28 20 h8 v12 h12 v8 H36 v12 h-8 V40 H16 v-8 h12 Z" fill="#c9a227"/></svg>
+        <div class="brand">Accademia Medievale<span>Cruciverba di storia</span></div>
+      </div>
+      <div class="user-chip">
+        <span class="badge" id="userBadge"></span>
+        <span class="badge study" id="modeBadge"></span>
+        <button class="btn" id="exitBtn" type="button">Esci</button>
+        <button class="btn" id="logoutBtn" type="button">🚪 Esci dall'account</button>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <div class="stats">
+        <span id="statLabel">Parole completate</span>
+        <strong id="count">0 / 15</strong>
+        <div class="track" id="track"><div id="bar"></div></div>
+        <strong id="percent">0%</strong>
+        <span class="timer only-verify hidden" id="timer">00:00</span>
+      </div>
+      <div class="actions">
+        <button class="btn navy" id="checkBtn" type="button">Controlla</button>
+        <button class="btn ghost only-study" id="hintBtn" type="button">💡 Suggerimento</button>
+        <button class="btn ghost only-study" id="solutionBtn" type="button">Mostra soluzione</button>
+        <button class="btn ghost only-study" id="theoryBtn" type="button">📖 Teoria</button>
+        <button class="btn gold only-verify hidden" id="deliverBtn" type="button">Consegna verifica</button>
+        <button class="btn ghost" id="autoBtn" type="button" title="Inserisce da solo tutte le parole">🤖 Auto-completa: ON</button>
+        <button class="btn ghost" id="printBtn" type="button" title="Stampa il cruciverba in A4">🖨️ Stampa</button>
+        <button class="btn ghost" id="pdfBtn" type="button" title="Scarica il cruciverba in PDF">📄 Scarica PDF</button>
+        <button class="btn ghost" id="newBtn" type="button">Nuova partita</button>
+      </div>
+    </div>
+
+    <div id="message" class="message" role="status" aria-live="polite"></div>
+
+    <main class="layout">
+      <section class="card">
+        <div class="card-title">La griglia <span class="hint">Clicca una casella e scrivi con la tastiera</span></div>
+        <div class="grid-scroll"><div id="grid" class="grid" role="grid" aria-label="Griglia del cruciverba"></div></div>
+        <div class="legend">
+          <span><i class="sw-g"></i> Corretta</span><span><i class="sw-r"></i> Errata</span>
+          <span><i class="sw-m"></i> Da compilare</span><span><i class="sw-h"></i> Suggerimento</span>
+        </div>
+      </section>
+      <aside class="card">
+        <div class="card-title">Definizioni <span class="hint">Clicca per evidenziare la parola</span></div>
+        <div class="clue-section"><h3>Orizzontali</h3><ol id="cluesH" class="clue-list"></ol></div>
+        <div class="clue-section"><h3>Verticali</h3><ol id="cluesV" class="clue-list"></ol></div>
+      </aside>
+    </main>
+    <div class="app-footer">Realizzato per lo studio della storia · HTML, CSS e JavaScript vanilla · © Accademia Medievale</div>
+  </div>
+</section>
+
+<!-- ===================== TEORIA ===================== -->
+<dialog id="theoryDialog">
+  <div class="dlg-head"><h2>📖 Teoria del Medioevo</h2><button class="x-btn" id="closeTheory" type="button" aria-label="Chiudi">✕</button></div>
+  <div class="dlg-body"><div class="theory-list" id="theoryList"></div></div>
+  <div class="dlg-foot"><button class="btn navy" id="okTheory" type="button">Torna al cruciverba</button></div>
+</dialog>
+
+<!-- ===================== RISULTATO ===================== -->
+<dialog id="resultDialog">
+  <div class="dlg-head"><h2 id="resultTitle">Risultato della verifica</h2><button class="x-btn" id="closeResult" type="button" aria-label="Chiudi">✕</button></div>
+  <div class="dlg-body" id="resultBody"></div>
+  <div class="dlg-foot" id="resultFoot"></div>
+</dialog>
+
+<!-- ===================== CONGRATULAZIONI ===================== -->
+<dialog id="congratsDialog" class="congrats-dialog">
+  <div class="dlg-body">
+    <div class="big">🏆</div>
+    <h2>Congratulazioni!</h2>
+    <p id="congratsText">Hai completato il cruciverba del Medioevo.</p>
+  </div>
+  <div class="dlg-foot" style="justify-content:center"><button class="btn gold" id="okCongrats" type="button">Continua</button></div>
+</dialog>
+
+<!-- ===================== SCELTA PDF ===================== -->
+<dialog id="pdfDialog">
+  <div class="dlg-head"><h2>📄 Scarica il cruciverba</h2><button class="x-btn" id="closePdf" type="button" aria-label="Chiudi">✕</button></div>
+  <div class="dlg-body">
+    <p style="font-size:14px;margin:0 0 14px">Scegli la versione del PDF in formato A4:</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn navy" id="pdfEmpty" type="button">PDF vuoto</button>
+      <button class="btn gold" id="pdfSolved" type="button">PDF con soluzioni</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- ===================== STORICO ===================== -->
+<dialog id="historyDialog">
+  <div class="dlg-head"><h2>🗂 Storico risultati</h2><button class="x-btn" id="closeHistory" type="button" aria-label="Chiudi">✕</button></div>
+  <div class="dlg-body" id="historyBody"></div>
+  <div class="dlg-foot"><button class="btn ghost" id="clearHistory" type="button">Cancella storico</button><button class="btn navy" id="okHistory" type="button">Chiudi</button></div>
+</dialog>
+
+<div id="printArea" aria-hidden="true"></div>
+
+<script>
+/* =========================================================
+   1. DATI
+   ========================================================= */
+const WORDS = [
+  { word:'MEDIOEVO', clue:'Il periodo che va, per convenzione, dal 476 al 1492.',
+    why:'Il Medioevo inizia convenzionalmente nel 476 con la fine dell’Impero Romano d’Occidente e finisce nel 1492 con la scoperta dell’America.' },
+  { word:'FEUDALESIMO', clue:'Sistema basato sui feudi.',
+    why:'Nel feudalesimo il re concedeva i feudi ai nobili, che in cambio lo aiutavano in guerra e comandavano sul proprio territorio.' },
+  { word:'QUIERZY', clue:'La legge che rese ereditari i feudi.',
+    why:'Il Capitolare di Quierzy dell’877 stabilì che i feudi dei conti passassero ai figli: così i nobili diventarono più potenti del re.' },
+  { word:'LABORATORES', clue:'Contadini che lavoravano la terra.',
+    why:'I Laboratores erano i contadini: lavoravano la terra e producevano il cibo per tutta la società medievale.' },
+  { word:'ORATORES', clue:'Persone che pregavano.',
+    why:'Gli Oratores erano preti e monaci: pregavano, celebravano i riti e guidavano le anime dei fedeli.' },
+  { word:'BELLATORES', clue:'Guerrieri della società medievale.',
+    why:'I Bellatores erano i guerrieri e i cavalieri: difendevano il territorio e servivano il proprio signore in battaglia.' },
+  { word:'OTTONE', clue:'Imperatore del Sacro Romano Impero.',
+    why:'Ottone I di Germania fu incoronato imperatore nel 962: con lui nacque il Sacro Romano Impero.' },
+  { word:'PESTE', clue:'Grave epidemia del Medioevo.',
+    why:'La Peste Nera colpì l’Europa nel 1348: morì circa un terzo della popolazione e molte città restarono spopolate.' },
+  { word:'TRIENNALE', clue:'Metodo agricolo con tre campi.',
+    why:'La coltivazione triennale divideva i campi in tre parti: due coltivate e una a riposo, ruotando ogni anno.' },
+  { word:'CROCIATE', clue:'Spedizioni verso la Terra Santa.',
+    why:'Le Crociate furono spedizioni organizzate dall’Europa verso la Terra Santa per liberare e controllare Gerusalemme.' },
+  { word:'GERUSALEMME', clue:'La città della Terra Santa.',
+    why:'Gerusalemme è la città santa che i crociati volevano conquistare: fu presa nel 1096 durante la Prima Crociata.' },
+  { word:'FEUDO', clue:'Terreno concesso da un signore.',
+    why:'Il feudo era il terreno che un signore concedeva a un vassallo in cambio di fedeltà e aiuto militare.' },
+  { word:'VASSALLO', clue:'Chi riceveva un feudo dal signore.',
+    why:'Il vassallo giurava fedeltà al signore, riceveva il feudo e doveva aiutarlo in guerra e in pace.' },
+  { word:'NOBILTA', clue:'La classe dei signori e dei guerrieri.',
+    why:'La nobiltà era l’ordine dei signori: possedeva i feudi, comandava sui contadini e serviva il re come guerriera.' },
+  { word:'CLERO', clue:'I preti e i monaci.',
+    why:'Il clero era l’ordine di chi si occupava della religione: preti, monaci e vescovi pregavano e guidavano la Chiesa.' }
+];
+
+const THEORY = [
+  { t:'Date convenzionali del Medioevo', d:'Gli studiosi fanno iniziare il Medioevo nel 476, con la fine dell’Impero Romano d’Occidente.\nLo fanno finire nel 1492, anno della scoperta dell’America.\nSono date convenzionali: servono a dividere la storia in periodi.\nIn realtà il passaggio avvenne lentamente, non in un solo giorno.' },
+  { t:'Feudalesimo', d:'Il feudalesimo è il sistema che nacque dopo la caduta dell’Impero Romano.\nIl re concedeva i feudi ai nobili, che in cambio lo aiutavano in guerra.\nOgni signore comandava sul proprio territorio e riscuoteva le tasse.\nLa società era divisa in gruppi molto diversi tra loro.' },
+  { t:'Capitolare di Quierzy', d:'Il Capitolare di Quierzy fu una legge dell’anno 877.\nStabiliva che i feudi dei conti diventassero ereditari.\nI figli potevano quindi prendere il posto del padre.\nIl potere del re si indebolì e i nobili diventarono più forti.' },
+  { t:'Laboratores, Oratores e Bellatores', d:'La società medievale era divisa in tre ordini.\nI Laboratores erano i contadini che lavoravano la terra e producevano il cibo.\nGli Oratores erano i monaci e i preti che pregavano e guidavano le anime.\nI Bellatores erano i guerrieri e i cavalieri che difendevano il paese.' },
+  { t:'Sacro Romano Impero', d:'Il Sacro Romano Impero nacque nell’Europa centrale nel 962.\nVoleva essere la continuazione dell’antico Impero Romano.\nComprendeva Germania, Italia e altri territori.\nIl suo sovrano era incoronato dal Papa e si diceva imperatore.' },
+  { t:'Ottone I', d:'Ottone I fu il re di Germania che nel 962 divenne imperatore.\nCon lui nacque il Sacro Romano Impero.\nSconfisse gli ungheresi e portò pace nel regno.\nPer questo è considerato uno dei sovrani più importanti del Medioevo.' },
+  { t:'Peste Nera', d:'La Peste Nera fu una grave epidemia che colpì l’Europa nel 1348.\nLa malattia era portata dai topi e dalle pulci.\nMorì circa un terzo della popolazione europea.\nCi fu carestia, paura e molte città restarono quasi vuote.' },
+  { t:'Coltivazione triennale', d:'La coltivazione triennale divise i campi in tre parti.\nIn un campo si seminava in autunno, in un altro in primavera e il terzo riposava.\nDopo tre anni si ruotava l’ordine.\nCosì la terra non si stancava e si raccoglieva molto di più.' },
+  { t:'Crociate', d:'Le Crociate furono spedizioni organizzate dall’Europa verso la Terra Santa.\nI cavalieri partivano per liberare Gerusalemme.\nLa prima crociata iniziò nel 1096 e conquistò la città.\nLe crociate durarono circa due secoli e causarono molte battaglie.' },
+  { t:'Cavalieri medievali', d:'I cavalieri erano guerrieri a cavallo che servivano un signore.\nPortavano armature e spade e ricevevano un feudo in cambio del loro servizio.\nDovevano essere coraggiosi e leali al proprio signore.\nErano considerati il modello del guerriero medievale.' }
+];
+
+/* Configurazione EmailJS: inserisci qui le tue chiavi gratuite per inviare l'attestato.
+   Servono: Public Key, Service ID, Template ID (https://www.emailjs.com/). */
+const EMAILJS = { publicKey:'', serviceId:'', templateId:'', enabled:false };
+
+/* =========================================================
+   2. GENERATORE DEL CRUCIVERBA
+   ========================================================= */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+
+function solve(seed){
+  const rnd=mulberry32(seed), cells=new Map(), placed=[], key=(r,c)=>r+','+c, LIMIT=60000;
+  let tries=0;
+  function canPlace(w,r,c,dir){
+    let cross=0;
+    for(let i=0;i<w.length;i++){
+      const rr=dir==='H'?r:r+i, cc=dir==='H'?c+i:c, cell=cells.get(key(rr,cc));
+      if(cell){ if(cell.ch!==w[i])return -1; if(cell.words.some(x=>x.dir===dir))return -1; cross++; }
+      else{ if(dir==='H'){if(cells.has(key(rr-1,cc))||cells.has(key(rr+1,cc)))return -1;} else {if(cells.has(key(rr,cc-1))||cells.has(key(rr,cc+1)))return -1;} }
+    }
+    const br=dir==='H'?r:r-1, bc=dir==='H'?c-1:c;
+    const lr=dir==='H'?r:r+w.length-1, lc=dir==='H'?c+w.length-1:c;
+    const ar=dir==='H'?lr:lr+1, ac=dir==='H'?lc+1:lc;
+    if(cells.has(key(br,bc))||cells.has(key(ar,ac)))return -1;
+    return cross;
+  }
+  function add(w,e){for(let i=0;i<w.length;i++){const rr=e.dir==='H'?e.r:e.r+i,cc=e.dir==='H'?e.c+i:e.c,k=key(rr,cc);let cell=cells.get(k);if(!cell){cell={ch:w[i],words:[]};cells.set(k,cell);}cell.words.push({id:e.id,dir:e.dir});}}
+  function remove(w,e){for(let i=0;i<w.length;i++){const rr=e.dir==='H'?e.r:e.r+i,cc=e.dir==='H'?e.c+i:e.c,k=key(rr,cc),cell=cells.get(k),p=cell.words.findIndex(x=>x.id===e.id);if(p>=0)cell.words.splice(p,1);if(!cell.words.length)cells.delete(k);}}
+  function place(idx,order){
+    if(idx===order.length)return true;
+    if(++tries>LIMIT)return false;
+    const w=order[idx], cands=new Map();
+    for(const p of placed){
+      for(let j=0;j<p.word.length;j++)for(let i=0;i<w.length;i++){
+        if(p.word[j]!==w[i])continue;
+        const dir=p.dir==='H'?'V':'H', r=p.dir==='H'?p.r-i:p.r+j, c=p.dir==='H'?p.c+j:p.c-i, k=r+','+c+','+dir;
+        if(cands.has(k))continue;
+        const cr=canPlace(w,r,c,dir);
+        if(cr>0)cands.set(k,{r,c,dir,score:cr+rnd()*0.9});
+      }
+    }
+    const list=[...cands.values()].sort((a,b)=>b.score-a.score).slice(0,25);
+    for(const cand of list){
+      const e={word:w,r:cand.r,c:cand.c,dir:cand.dir,id:idx};
+      placed.push(e);add(w,e);
+      if(place(idx+1,order))return true;
+      remove(w,e);placed.pop();
+      if(tries>LIMIT)return false;
+    }
+    return false;
+  }
+  const strings=WORDS.map(x=>x.word);
+  const first=strings.reduce((a,b)=>b.length>a.length?b:a);
+  const rest=strings.filter(w=>w!==first).map(w=>({w,s:w.length+rnd()*0.99})).sort((a,b)=>b.s-a.s).map(x=>x.w);
+  const order=[first,...rest];
+  const e0={word:first,r:0,c:0,dir:'H',id:0};
+  placed.push(e0);add(first,e0);
+  return place(1,order)?{placed,cells}:null;
+}
+let layout=null;
+for(let seed=1;seed<=300&&!layout;seed++)layout=solve(seed);
+if(!layout)throw new Error('Griglia non generabile');
+
+const coords=[...layout.cells.keys()].map(k=>k.split(',').map(Number));
+const minR=Math.min(...coords.map(x=>x[0])), minC=Math.min(...coords.map(x=>x[1]));
+const maxR=Math.max(...coords.map(x=>x[0])), maxC=Math.max(...coords.map(x=>x[1]));
+const rows=maxR-minR+1, cols=maxC-minC+1;
+const cellMap=new Map();
+for(const [k,data] of layout.cells){
+  const [r,c]=k.split(',').map(Number);
+  cellMap.set((r-minR)+','+(c-minC),{r:r-minR,c:c-minC,sol:data.ch,nums:[],wordIds:[],el:null,input:null});
+}
+const words=layout.placed.map(p=>({...p,r:p.r-minR,c:p.c-minC,cells:[],li:null}))
+  .sort((a,b)=>a.r-b.r||a.c-b.c);
+words.forEach((w,i)=>{
+  w.id=i; w.num=i+1; w.info=WORDS.find(x=>x.word===w.word);
+  for(let j=0;j<w.word.length;j++){
+    const rr=w.dir==='H'?w.r:w.r+j, cc=w.dir==='H'?w.c+j:w.c, cell=cellMap.get(rr+','+cc);
+    cell.wordIds.push(w.id); if(j===0)cell.nums.push(w.num); w.cells.push(cell);
+  }
+});
+
+/* =========================================================
+   3. RENDERING GRIGLIA E DEFINIZIONI
+   ========================================================= */
+const gridEl=document.getElementById('grid'), countEl=document.getElementById('count'), barEl=document.getElementById('bar'),
+      percentEl=document.getElementById('percent'), msgEl=document.getElementById('message');
+gridEl.style.setProperty('--cols',cols);
+gridEl.style.setProperty('--cell','clamp(23px, calc(90vw / '+cols+'), 31px)');
+const frag=document.createDocumentFragment();
+for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+  const cell=cellMap.get(r+','+c), div=document.createElement('div');
+  div.className='cell'+(cell?'':' blank');
+  if(cell){
+    div.setAttribute('role','gridcell');
+    if(cell.nums.length){const n=document.createElement('span');n.className='num';n.textContent=cell.nums.join('/');div.appendChild(n);}
+    const input=document.createElement('input');
+    input.type='text';input.maxLength=1;input.autocomplete='off';input.spellcheck=false;
+    input.setAttribute('aria-label','Casella riga '+(r+1)+', colonna '+(c+1));
+    div.appendChild(input);cell.el=div;cell.input=input;bindCell(cell);
+  }
+  frag.appendChild(div);
+}
+gridEl.appendChild(frag);
+
+const cluesH=document.getElementById('cluesH'), cluesV=document.getElementById('cluesV');
+words.forEach(w=>{
+  const li=document.createElement('li');
+  const n=document.createElement('span');n.className='clue-num';n.textContent=w.num+'.';
+  const txt=document.createElement('span');txt.className='clue-text';txt.textContent=w.info.clue;
+  const len=document.createElement('span');len.className='clue-len';len.textContent='('+w.word.length+')';
+  li.append(n,txt,len);
+  li.addEventListener('click',()=>{const t=w.cells.find(c=>!c.input.value)||w.cells[0];setActiveCell(t,w.dir);t.input.focus();});
+  w.li=li;
+  (w.dir==='H'?cluesH:cluesV).appendChild(li);
+});
+
+THEORY.forEach(x=>{
+  const d=document.createElement('details'), s=document.createElement('summary'), p=document.createElement('p');
+  s.textContent=x.t; p.textContent=x.d; d.append(s,p); document.getElementById('theoryList').appendChild(d);
+});
+
+/* =========================================================
+   4. STATO, LOGIN, MODALITÀ
+   ========================================================= */
+const STORE='cruciverbaMedioevo.v1';
+let user=null, mode=null, activeWord=null, activeDir='H', checked=false, delivered=false, celebrated=false, autoComplete=true;
+let startTs=0, savedSeconds=0, timerId=null, certificate=null;
+
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));}
+function message(text,type){msgEl.textContent=text;msgEl.className='message show '+type;}
+function hideMessage(){msgEl.className='message';msgEl.textContent='';}
+function setErr(id,bad){document.getElementById(id).classList.toggle('show',bad);document.getElementById(id+'Err').classList.toggle('show',bad);}
+
+document.getElementById('loginForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const name=document.getElementById('nome').value.trim(), surname=document.getElementById('cognome').value.trim(), email=document.getElementById('email').value.trim();
+  const nameOk=/^[A-Za-zÀ-ÿ' -]{2,}$/.test(name), surOk=/^[A-Za-zÀ-ÿ' -]{2,}$/.test(surname), mailOk=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+  setErr('nome',!nameOk);setErr('cognome',!surOk);setErr('email',!mailOk);
+  document.getElementById('nome').classList.toggle('invalid',!nameOk);
+  document.getElementById('cognome').classList.toggle('invalid',!surOk);
+  document.getElementById('email').classList.toggle('invalid',!mailOk);
+  if(!(nameOk&&surOk&&mailOk))return;
+  user={name,surname,email};
+  localStorage.setItem(STORE+'.user',JSON.stringify(user));
+  document.getElementById('modeGreeting').textContent='Benvenuto, '+name+'! Scegli la modalità.';
+  showScreen('modeScreen');
+});
+
+document.getElementById('studyMode').addEventListener('click',()=>startGame('study'));
+document.getElementById('verifyMode').addEventListener('click',()=>startGame('verify'));
+document.getElementById('exitBtn').addEventListener('click',()=>{stopTimer();showScreen('modeScreen');});
+function logout(){
+  stopTimer();
+  localStorage.removeItem(STORE+'.user');
+  if(user&&mode)localStorage.removeItem(STORE+'.'+mode+'.'+user.email);
+  user=null;mode=null;delivered=false;checked=false;celebrated=false;certificate=null;
+  ['nome','cognome','email'].forEach(id=>{document.getElementById(id).value='';document.getElementById(id).classList.remove('invalid');});
+  document.querySelectorAll('.err').forEach(e=>e.classList.remove('show'));
+  clearStyles();cellMap.forEach(c=>{c.input.value='';stateClasses(c);});
+  hideMessage();showScreen('loginScreen');
+}
+document.getElementById('logoutBtn').addEventListener('click',logout);
+document.getElementById('logoutBtn2').addEventListener('click',logout);
+
+function startGame(m){
+  mode=m; delivered=false; checked=false; celebrated=false; certificate=null;
+  document.getElementById('deliverBtn').disabled=false;
+  document.getElementById('modeBadge').textContent=m==='study'?'📚 Studio':'📝 Verifica';
+  document.getElementById('modeBadge').className='badge '+m;
+  document.getElementById('userBadge').textContent=user.name+' '+user.surname;
+  document.getElementById('statLabel').textContent=m==='study'?'Parole completate':'Parole compilate';
+  document.querySelectorAll('.only-study').forEach(el=>el.classList.toggle('hidden',m!=='study'));
+  document.querySelectorAll('.only-verify').forEach(el=>el.classList.toggle('hidden',m!=='verify'));
+  showScreen('gameScreen');
+  clearGrid(); restoreProgress(); updateProgress(); hideMessage();
+  if(m==='verify')resumeTimer(savedSeconds);else stopTimer();
+  if(autoComplete)setTimeout(autoFill,350);
+}
+
+/* =========================================================
+   5. INTERAZIONE GRIGLIA
+   ========================================================= */
+function indexIn(cell,w){return w.dir==='H'?cell.c-w.c:cell.r-w.r;}
+function stateClasses(c){c.el.classList.remove('correct','wrong','missing','revealed','hint-shown');}
+function setActiveCell(cell,dir){
+  const ids=cell.wordIds, id=ids.find(i=>words[i].dir===dir);
+  activeWord=id!==undefined?id:ids[0]; activeDir=words[activeWord].dir; refreshHighlight();
+}
+function refreshHighlight(){
+  document.querySelectorAll('.cell.active').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.clue-list li.current').forEach(el=>el.classList.remove('current'));
+  if(activeWord!==null&&activeWord!==undefined){
+    words[activeWord].cells.forEach(c=>c.el.classList.add('active'));
+    words[activeWord].li.classList.add('current');
+  }
+}
+function focusCell(cell){if(!cell)return;setActiveCell(cell,activeDir);cell.input.focus();cell.input.select();}
+function cellAt(r,c){return cellMap.get(r+','+c)||null;}
+function clearStyles(){cellMap.forEach(stateClasses);words.forEach(w=>w.li.classList.remove('clue-wrong','current','solved'));}
+
+function bindCell(cell){
+  const input=cell.input;
+  input.addEventListener('focus',()=>setActiveCell(cell,activeDir));
+  input.addEventListener('mousedown',()=>{
+    if(cell.wordIds.length>1){
+      const other=cell.wordIds.find(i=>words[i].dir!==activeDir);
+      if(other!==undefined){activeDir=words[other].dir;setActiveCell(cell,activeDir);}
+    }
+  });
+  input.addEventListener('input',()=>{
+    if(delivered)return;
+    const v=input.value.toUpperCase().replace(/[^A-Z]/g,'');
+    input.value=v.slice(-1);
+    stateClasses(cell);checked=false;hideMessage();saveProgress();updateProgress();
+    if(v){const w=words[activeWord];if(w){const idx=indexIn(cell,w);if(idx>=0&&idx+1<w.cells.length)focusCell(w.cells[idx+1]);}}
+  });
+  input.addEventListener('keydown',e=>{
+    if(delivered){e.preventDefault();return;}
+    const w=words[activeWord], idx=w?indexIn(cell,w):-1;
+    if(e.key==='Backspace'||e.key==='Delete'){
+      e.preventDefault();
+      if(input.value)input.value='';
+      else if(e.key==='Backspace'&&w&&idx>0){const p=w.cells[idx-1];p.input.value='';stateClasses(p);focusCell(p);}
+      stateClasses(cell);checked=false;hideMessage();saveProgress();updateProgress();return;
+    }
+    const d={ArrowRight:[0,1],ArrowLeft:[0,-1],ArrowUp:[-1,0],ArrowDown:[1,0]}[e.key];
+    if(!d)return;e.preventDefault();
+    const along=(d[0]!==0&&w&&w.dir==='V')||(d[1]!==0&&w&&w.dir==='H');
+    if(along){const step=d[0]!==0?d[0]:d[1],nxt=w.cells[idx+step];if(nxt)focusCell(nxt);}
+    else{const nxt=cellAt(cell.r+d[0],cell.c+d[1]);if(nxt)focusCell(nxt);}
+  });
+}
+
+function correctWord(w){return w.cells.every(c=>c.input.value===c.sol);}
+function completedCount(){
+  return words.filter(w=>mode==='verify'?w.cells.every(c=>c.input.value):correctWord(w)).length;
+}
+function updateProgress(){
+  const n=completedCount(), pct=Math.round(n/15*100);
+  countEl.textContent=n+' / 15';barEl.style.width=pct+'%';percentEl.textContent=pct+'%';
+  words.forEach(w=>w.li.classList.toggle('solved',mode!=='verify'&&correctWord(w)));
+  if(checked)words.forEach(w=>w.li.classList.toggle('clue-wrong',w.cells.some(c=>c.input.value&&c.input.value!==c.sol)));
+  if(mode==='study'&&n===15&&!checked&&!celebrated){
+    celebrated=true;confetti();
+    document.getElementById('congratsText').textContent='Hai completato tutte e 15 le parole del Medioevo.';
+    document.getElementById('congratsDialog').showModal();
+  }
+}
+
+/* =========================================================
+   6. PULSANTI STUDIO / VERIFICA
+   ========================================================= */
+document.getElementById('checkBtn').addEventListener('click',()=>{
+  if(mode==='verify'||delivered)return;
+  checked=true;let errors=0,empty=0;
+  cellMap.forEach(c=>{
+    stateClasses(c);const v=c.input.value;
+    if(v&&v===c.sol)c.el.classList.add('correct');
+    else if(v){c.el.classList.add('wrong');errors++;}
+    else{c.el.classList.add('missing');empty++;}
+  });
+  words.forEach(w=>w.li.classList.toggle('clue-wrong',w.cells.some(c=>c.input.value&&c.input.value!==c.sol)));
+  if(errors===0&&empty===0)message('Ottimo! Tutte le parole sono corrette.','ok');
+  else if(errors)message(errors===1?'C’è 1 lettera errata (in rosso). Correggila!':'Ci sono '+errors+' lettere errate (in rosso). Correggile!','bad');
+  else message('Mancano ancora '+empty+' caselle. Continua così!','info');
+});
+
+document.getElementById('solutionBtn').addEventListener('click',()=>{
+  if(mode!=='study')return;
+  cellMap.forEach(c=>{c.input.value=c.sol;stateClasses(c);c.el.classList.add('revealed');});
+  checked=false;clearWrong();saveProgress();updateProgress();message('Ecco la soluzione completa.','info');
+});
+
+document.getElementById('hintBtn').addEventListener('click',()=>{
+  if(mode!=='study')return;
+  const w=words.find(w=>!correctWord(w));
+  if(!w){message('Hai già completato tutte le parole!','ok');return;}
+  const cell=w.cells.find(c=>!c.input.value)||w.cells.find(c=>c.input.value!==c.sol);
+  cell.input.value=cell.sol;stateClasses(cell);cell.el.classList.add('hint-shown');
+  checked=false;clearWrong();saveProgress();updateProgress();
+  message('Suggerimento: la lettera "'+cell.sol+'" è stata inserita.','info');
+});
+function clearWrong(){words.forEach(w=>w.li.classList.remove('clue-wrong'));}
+
+document.getElementById('theoryBtn').addEventListener('click',()=>document.getElementById('theoryDialog').showModal());
+document.getElementById('closeTheory').addEventListener('click',()=>document.getElementById('theoryDialog').close());
+document.getElementById('okTheory').addEventListener('click',()=>document.getElementById('theoryDialog').close());
+document.getElementById('okCongrats').addEventListener('click',()=>document.getElementById('congratsDialog').close());
+
+document.getElementById('newBtn').addEventListener('click',()=>{
+  resetStorage();clearGrid();delivered=false;checked=false;celebrated=false;hideMessage();updateProgress();
+  if(mode==='verify')startTimer();
+  message(autoComplete?'Nuova partita: compilazione automatica in corso…':'Nuova partita iniziata. Buon lavoro!','info');
+  if(autoComplete)setTimeout(autoFill,250);
+});
+
+function clearGrid(){clearStyles();cellMap.forEach(c=>{c.input.value='';stateClasses(c);});activeWord=null;activeDir='H';}
+function resetStorage(){if(user&&mode)localStorage.removeItem(STORE+'.'+mode+'.'+user.email);}
+
+/* Compilazione automatica (modalità demo) */
+function autoFill(){
+  if(!user||!mode||delivered)return;
+  const list=[];
+  words.forEach(w=>w.cells.forEach(c=>{if(list.indexOf(c)<0)list.push(c);}));
+  let i=0;
+  const id=setInterval(()=>{
+    if(i>=list.length){
+      clearInterval(id);
+      if(mode==='verify'&&!delivered)document.getElementById('deliverBtn').click();
+      return;
+    }
+    const c=list[i++];
+    c.input.value=c.sol;stateClasses(c);c.el.classList.add('revealed');
+    saveProgress();updateProgress();
+  },14);
+}
+document.getElementById('autoBtn').addEventListener('click',()=>{
+  autoComplete=!autoComplete;
+  document.getElementById('autoBtn').textContent='🤖 Auto-completa: '+(autoComplete?'ON':'OFF');
+  message(autoComplete?'Compilazione automatica attivata.':'Compilazione automatica disattivata: ora puoi giocare manualmente.','info');
+});
+
+/* =========================================================
+   7. TIMER E VERIFICA
+   ========================================================= */
+function fmt(s){const m=Math.floor(s/60),ss=s%60;return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0');}
+function elapsed(){return savedSeconds+(startTs?Math.floor((Date.now()-startTs)/1000):0);}
+function updateTimer(){document.getElementById('timer').textContent=fmt(elapsed());}
+function stopTimer(){if(timerId){clearInterval(timerId);timerId=null;}startTs=0;}
+function resumeTimer(saved){
+  stopTimer();savedSeconds=saved||0;startTs=Date.now();updateTimer();timerId=setInterval(updateTimer,1000);
+}
+function startTimer(){resumeTimer(0);}
+document.getElementById('deliverBtn').addEventListener('click',()=>{
+  if(delivered)return;
+  delivered=true;document.getElementById('deliverBtn').disabled=true;stopTimer();const sec=elapsed();
+  const correct=words.filter(correctWord).length, wrong=15-correct, pct=Math.round(correct/15*100);
+  const vote=pct>=90?10:pct>=80?9:pct>=70?8:pct>=60?7:pct>=50?6:pct>=40?5:pct>=30?4:3;
+  const passed=vote>=6;
+  saveResult({data:new Date().toLocaleDateString('it-IT'),nome:user.name+' '+user.surname,email:user.email,modalita:'Verifica',tempo:fmt(sec),percentuale:pct+'%',voto:vote+'/10'});
+  const rd=document.getElementById('resultBody'), rf=document.getElementById('resultFoot');
+  document.getElementById('resultTitle').textContent=passed?'Verifica superata!':'Risultato della verifica';
+  rd.innerHTML='<div class="result-grid">'+
+    '<div><b>'+correct+'</b><span>Risposte corrette</span></div>'+
+    '<div><b>'+wrong+'</b><span>Risposte errate</span></div>'+
+    '<div><b>'+pct+'%</b><span>Percentuale</span></div>'+
+    '<div><b>'+fmt(sec)+'</b><span>Tempo impiegato</span></div></div>'+
+    '<div class="vote-box"><b>'+vote+'/10</b><small>Voto finale in decimi</small></div>';
+  const sbagliate=words.filter(w=>!correctWord(w));
+  if(sbagliate.length){
+    rd.innerHTML+='<h3 class="wrong-title">📌 Parole sbagliate e perché</h3><ul class="wrong-list">'+
+      sbagliate.map(w=>'<li><b>'+w.num+'. '+w.word+'</b><br><span>Definizione: '+w.info.clue+'</span><br><em>Perché: '+w.info.why+'</em></li>').join('')+'</ul>';
+  }
+  if(passed){
+    certificate=buildCertificatePDF({name:user.name+' '+user.surname,date:new Date().toLocaleDateString('it-IT'),vote:vote,percent:pct,time:fmt(sec)});
+    rd.innerHTML+='<div class="status">🏆 <b>Esperto del Medioevo!</b> Il tuo attestato è pronto.</div><div class="status" id="mailStatus">Invio e-mail in corso…</div>';
+    rf.innerHTML='<button class="btn navy" id="downloadBtn" type="button">⬇ Scarica attestato PDF</button><button class="btn ghost" id="retryBtn" type="button">Nuova verifica</button>';
+    sendCertificateEmail(certificate,{vote:vote,percent:pct,time:fmt(sec)});
+  }else{
+    rd.innerHTML+='<div class="status">📚 Non ce l’hai ancora: ripassa la teoria in Modalità Studio e riprova. Nessun attestato viene generato.</div>';
+    rf.innerHTML='<button class="btn gold" id="retryBtn" type="button">Riprova</button>';
+  }
+  document.getElementById('resultDialog').showModal();
+  document.getElementById('retryBtn').addEventListener('click',()=>{document.getElementById('resultDialog').close();newGameVerify();});
+  if(passed)document.getElementById('downloadBtn').addEventListener('click',downloadCertificate);
+});
+function newGameVerify(){resetStorage();clearGrid();savedSeconds=0;delivered=false;checked=false;celebrated=false;document.getElementById('deliverBtn').disabled=false;hideMessage();updateProgress();startTimer();}
+document.getElementById('closeResult').addEventListener('click',()=>document.getElementById('resultDialog').close());
+
+/* =========================================================
+   8. SALVATAGGIO LOCALE
+   ========================================================= */
+function saveProgress(){
+  if(!user||!mode)return;
+  const cells={};cellMap.forEach((c,k)=>{if(c.input.value)cells[k]=c.input.value;});
+  localStorage.setItem(STORE+'.'+mode+'.'+user.email,JSON.stringify({cells:cells,seconds:elapsed()}));
+}
+function restoreProgress(force){
+  if(!user||!mode)return;
+  let data=null;
+  try{data=JSON.parse(localStorage.getItem(STORE+'.'+mode+'.'+user.email)||'null');}catch(e){data=null;}
+  if(data&&data.cells&&!force){Object.entries(data.cells).forEach(([k,v])=>{const c=cellMap.get(k);if(c)c.input.value=v;});savedSeconds=data.seconds||0;}
+  else savedSeconds=0;
+}
+
+/* =========================================================
+   9. GENERATORE PDF (vanilla JS, nessuna libreria)
+   ========================================================= */
+function pdfEsc(s){
+  return String(s).replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)')
+    .replace(/[^\x20-\x7E]/g,ch=>'\\'+ch.charCodeAt(0).toString(8).padStart(3,'0'));
+}
+function buildCertificatePDF(d){
+  const C=[];
+  const txt=(x,y,size,text,font,color)=>{
+    C.push('BT /'+font+' '+size+' Tf '+color.join(' ')+' rg '+x+' '+y+' Td ('+pdfEsc(text)+') Tj ET');
+  };
+  const navy=[0.08,0.16,0.27], gold=[0.79,0.64,0.15], brown=[0.45,0.33,0.19];
+  C.push('0.965 0.918 0.816 rg 0 0 595 842 re f');
+  C.push('0.08 0.16 0.27 RG 3 w 28 28 539 786 re S');
+  C.push('0.79 0.64 0.15 RG 1.6 w 38 38 519 766 re S');
+  C.push('0.79 0.64 0.15 RG 0.8 w 44 44 507 754 re S');
+  // stemma
+  C.push('0.08 0.16 0.27 rg 297 664 m 337 686 l 337 724 l 297 752 l 257 724 l 257 686 l h f');
+  C.push('0.79 0.64 0.15 rg 297 674 m 327 690 l 327 720 l 297 742 l 267 720 l 267 690 l h f');
+  C.push('0.08 0.16 0.27 rg 293 688 8 8 re f');
+  C.push('0.08 0.16 0.27 rg 293 704 8 16 re f');
+  const center=(s,size)=>Math.max(50,297-s.length*size*0.27);
+  // titolo
+  C.push('BT /F2 22 Tf '+navy.join(' ')+' rg '+center('Attestato di conoscenza del Medioevo',22)+' 620 Td ('+pdfEsc('Attestato di conoscenza del Medioevo')+') Tj ET');
+  C.push('0.79 0.64 0.15 RG 2 w 120 604 m 475 604 l S');
+  txt(center('ACCADEMIA MEDIEVALE',11),572,11,'ACCADEMIA MEDIEVALE','F2',gold);
+  txt(120,530,15,'Studente: '+d.name,'F2',navy);
+  txt(120,500,13,'Data: '+d.date,'F1',brown);
+  txt(120,470,13,'Voto finale: '+d.vote+' / 10','F2',navy);
+  txt(120,440,13,'Percentuale ottenuta: '+d.percent+'%','F1',brown);
+  txt(120,410,13,'Tempo impiegato: '+d.time,'F1',brown);
+  C.push('0.79 0.64 0.15 RG 1.2 w 120 388 m 475 388 l S');
+  C.push('BT /F2 26 Tf '+gold.join(' ')+' rg '+center('Esperto del Medioevo',26)+' 340 Td ('+pdfEsc('Esperto del Medioevo')+') Tj ET');
+  C.push('BT /F1 10 Tf '+brown.join(' ')+' rg 150 100 Td ('+pdfEsc('Firma: ______________________')+') Tj ET');
+  C.push('BT /F1 10 Tf '+brown.join(' ')+' rg 350 100 Td ('+pdfEsc('Data: '+d.date)+') Tj ET');
+  const content=C.join('\n');
+  const objs=[
+    '<< /Type /Catalog /Pages 2 0 R >>',
+    '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+    '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>',
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>',
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>',
+    '<< /Length '+content.length+' >>\nstream\n'+content+'\nendstream'
+  ];
+  let pdf='%PDF-1.4\n',off=[0];
+  objs.forEach((o,i)=>{off[i+1]=pdf.length;pdf+=(i+1)+' 0 obj\n'+o+'\nendobj\n';});
+  const xref=pdf.length;
+  pdf+='xref\n0 '+(objs.length+1)+'\n0000000000 65535 f \n';
+  for(let i=1;i<=objs.length;i++)pdf+=String(off[i]).padStart(10,'0')+' 00000 n \n';
+  pdf+='trailer\n<< /Size '+(objs.length+1)+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF';
+  return pdf;
+}
+function downloadCertificate(){
+  if(!certificate)return;
+  const blob=new Blob([certificate],{type:'application/pdf'}), url=URL.createObjectURL(blob), a=document.createElement('a');
+  a.href=url;a.download='Attestato_Medioevo_'+user.name+'_'+user.surname+'.pdf';document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+async function sendCertificateEmail(pdf,data){
+  const st=document.getElementById('mailStatus');
+  if(!EMAILJS.enabled||!EMAILJS.publicKey||!EMAILJS.serviceId||!EMAILJS.templateId){
+    st.innerHTML='ℹ️ Attestato pronto. Per l’invio automatico configura EmailJS (Public Key, Service ID, Template ID) nel codice.';return;
+  }
+  try{
+    const b64=btoa(pdf);
+    const body={lib_version:'3.12.0',service_id:EMAILJS.serviceId,template_id:EMAILJS.templateId,user_id:EMAILJS.publicKey,
+      template_params:{to_email:user.email,studente:user.name+' '+user.surname,data:new Date().toLocaleDateString('it-IT'),
+        voto:data.vote+' / 10',percentuale:data.percent+'%',tempo:data.time,
+        pdf_base64:b64,pdf_link:'data:application/pdf;base64,'+b64}};
+    const r=await fetch('https://api.emailjs.com/api/v1.0/email/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    st.innerHTML=r.ok?'✅ Attestato inviato a '+user.email+'.':'⚠️ Invio non riuscito: scarica l’attestato dal pulsante qui sotto.';
+  }catch(e){st.innerHTML='⚠️ Invio non riuscito: scarica l’attestato dal pulsante qui sotto.';}
+}
+
+/* =========================================================
+   10. STORICO RISULTATI
+   ========================================================= */
+const HIST_KEY=STORE+'.history';
+function getHistory(){try{return JSON.parse(localStorage.getItem(HIST_KEY)||'[]');}catch(e){return [];}}
+function saveResult(d){const h=getHistory();h.unshift(d);localStorage.setItem(HIST_KEY,JSON.stringify(h.slice(0,50)));}
+function renderHistory(){
+  const h=getHistory(), body=document.getElementById('historyBody');
+  if(!h.length){body.innerHTML='<p style="font-size:14px;color:var(--muted)">Nessun risultato salvato. Completa una verifica per vedere qui lo storico.</p>';return;}
+  body.innerHTML='<div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:12.5px">'+
+    '<thead><tr style="background:var(--parchment)"><th style="padding:7px;text-align:left">Data</th><th style="padding:7px;text-align:left">Studente</th><th style="padding:7px;text-align:left">Modalità</th><th style="padding:7px">Tempo</th><th style="padding:7px">%</th><th style="padding:7px">Voto</th></tr></thead><tbody>'+
+    h.map(r=>'<tr style="border-bottom:1px solid var(--line)"><td style="padding:7px">'+(r.data||'')+'</td><td style="padding:7px">'+(r.nome||'')+'<br><small style="color:var(--muted)">'+(r.email||'')+'</small></td><td style="padding:7px">'+(r.modalita||'')+'</td><td style="padding:7px;text-align:center">'+(r.tempo||'')+'</td><td style="padding:7px;text-align:center">'+(r.percentuale||'')+'</td><td style="padding:7px;text-align:center;font-weight:700">'+(r.voto||'')+'</td></tr>').join('')+
+    '</tbody></table></div>';
+}
+document.getElementById('historyBtn').addEventListener('click',()=>{renderHistory();document.getElementById('historyDialog').showModal();});
+document.getElementById('closeHistory').addEventListener('click',()=>document.getElementById('historyDialog').close());
+document.getElementById('okHistory').addEventListener('click',()=>document.getElementById('historyDialog').close());
+document.getElementById('clearHistory').addEventListener('click',()=>{localStorage.removeItem(HIST_KEY);renderHistory();});
+
+/* =========================================================
+   11. PDF DEL CRUCIVERBA (A4) E STAMPA
+   ========================================================= */
+function wrapText(s,max){
+  const words=s.split(' '), lines=[];let cur='';
+  words.forEach(w=>{
+    if((cur+' '+w).trim().length>max&&cur){lines.push(cur);cur=w;}
+    else cur=(cur+' '+w).trim();
+  });
+  if(cur)lines.push(cur);
+  return lines;
+}
+function buildCrosswordPDF(withSolutions){
+  const C=[], date=new Date().toLocaleDateString('it-IT'), student=user?user.name+' '+user.surname:'';
+  const navy=[0.08,0.16,0.27], gold=[0.79,0.64,0.15], gray=[0.3,0.34,0.4];
+  const text=(x,y,size,str,font,color)=>C.push('BT /'+font+' '+size+' Tf '+color.join(' ')+' rg '+x+' '+y+' Td ('+pdfEsc(str)+') Tj ET');
+  C.push('1 1 1 rg 0 0 595 842 re f');
+  C.push('0.08 0.16 0.27 RG 2 w 28 28 539 786 re S');
+  C.push('0.79 0.64 0.15 RG 1 w 34 34 527 774 re S');
+  C.push('BT /F2 20 Tf '+navy.join(' ')+' rg 297 790 Td ('+pdfEsc('Cruciverba del Medioevo')+') Tj ET');
+  text(297,769,10,'Studente: '+student,'F1',navy);
+  text(297,753,9,'Data: '+date,'F1',gray);
+  C.push('0.79 0.64 0.15 RG 1.2 w 70 742 m 525 742 l S');
+  const cell=18, x0=(595-cols*cell)/2, yTop=725;
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    const cl=cellMap.get(r+','+c);
+    if(!cl)continue;
+    const x=x0+c*cell, y=yTop-(r+1)*cell;
+    C.push('0.35 0.38 0.42 RG 0.6 w '+x+' '+y+' '+cell+' '+cell+' re S');
+    if(cl.nums.length)text(x+1,y+12,4,cl.nums.join('/'),'F1',gray);
+    if(withSolutions)text(x+5,y+3,10,cl.sol,'F2',navy);
+  }
+  const yGridBottom=yTop-rows*cell, yStart=yGridBottom-14;
+  const columns=[['Orizzontali',words.filter(w=>w.dir==='H'),40],['Verticali',words.filter(w=>w.dir==='V'),310]];
+  columns.forEach(([title,list,x])=>{
+    text(x,yStart,10,title,'F2',navy);
+    let y=yStart-14;
+    list.forEach(w=>{
+      const lines=wrapText(w.num+'. '+w.info.clue,60);
+      lines.forEach((ln,i)=>{text(x,y-(i?9.5:0),7.2,ln,'F1',gray);});
+      y-=Math.max(9.5,lines.length*9.5)+2;
+    });
+  });
+  C.push('0.79 0.64 0.15 RG 1 w 40 66 m 555 66 l S');
+  text(45,48,9,'Nome: _______________________','F1',navy);
+  text(225,48,9,'Cognome: _______________________','F1',navy);
+  text(425,48,9,'Classe: ___________','F1',navy);
+  const objs=[
+    '<< /Type /Catalog /Pages 2 0 R >>',
+    '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+    '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>',
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>',
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>',
+    '<< /Length '+C.join('\n').length+' >>\nstream\n'+C.join('\n')+'\nendstream'
+  ];
+  let pdf='%PDF-1.4\n',off=[0];
+  objs.forEach((o,i)=>{off[i+1]=pdf.length;pdf+=(i+1)+' 0 obj\n'+o+'\nendobj\n';});
+  const xref=pdf.length;
+  pdf+='xref\n0 '+(objs.length+1)+'\n0000000000 65535 f \n';
+  for(let i=1;i<=objs.length;i++)pdf+=String(off[i]).padStart(10,'0')+' 00000 n \n';
+  pdf+='trailer\n<< /Size '+(objs.length+1)+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF';
+  return pdf;
+}
+function downloadPDF(pdf,name){
+  const blob=new Blob([pdf],{type:'application/pdf'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+function buildPrintArea(withSolutions){
+  const date=new Date().toLocaleDateString('it-IT'), student=user?user.name+' '+user.surname:'';
+  let g='<div class="print-grid" style="--cols:'+cols+'">';
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    const cl=cellMap.get(r+','+c);
+    g+='<div class="print-cell'+(cl?'':' blank')+'">'+(cl?'<span class="pn">'+cl.nums.join('/')+'</span>'+(withSolutions?cl.sol:'')+'':'')+'</div>';
+  }
+  g+='</div>';
+  const section=(title,list)=>'<div><h3>'+title+'</h3><ol>'+list.map(w=>'<li>'+w.info.clue+'</li>').join('')+'</ol></div>';
+  document.getElementById('printArea').innerHTML=
+    '<div class="print-head"><h1>Cruciverba del Medioevo</h1><p>Studente: '+student+' &nbsp;·&nbsp; Data: '+date+'</p></div>'+g+
+    '<div class="print-clues">'+section('Orizzontali',words.filter(w=>w.dir==='H'))+section('Verticali',words.filter(w=>w.dir==='V'))+'</div>'+
+    '<div class="print-foot"><span>Nome: ______________________</span><span>Cognome: ______________________</span><span>Classe: __________</span></div>';
+}
+document.getElementById('printBtn').addEventListener('click',()=>{buildPrintArea(false);setTimeout(()=>window.print(),100);});
+document.getElementById('pdfBtn').addEventListener('click',()=>{
+  if(mode==='verify'){downloadPDF(buildCrosswordPDF(false),'Cruciverba_Medioevo_vuoto.pdf');return;}
+  document.getElementById('pdfDialog').showModal();
+});
+document.getElementById('closePdf').addEventListener('click',()=>document.getElementById('pdfDialog').close());
+document.getElementById('pdfEmpty').addEventListener('click',()=>{downloadPDF(buildCrosswordPDF(false),'Cruciverba_Medioevo_vuoto.pdf');document.getElementById('pdfDialog').close();});
+document.getElementById('pdfSolved').addEventListener('click',()=>{downloadPDF(buildCrosswordPDF(true),'Cruciverba_Medioevo_soluzioni.pdf');document.getElementById('pdfDialog').close();});
+
+/* =========================================================
+   12. EFFETTI
+   ========================================================= */
+function confetti(){
+  const box=document.createElement('div');box.className='confetti';
+  const colors=['#c9a227','#142945','#16803f','#b92929','#e8c96a'];
+  for(let i=0;i<70;i++){
+    const p=document.createElement('i');p.style.left=Math.random()*100+'%';
+    p.style.background=colors[i%colors.length];p.style.animationDelay=(Math.random()*1.2)+'s';
+    p.style.animationDuration=(2+Math.random()*1.6)+'s';box.appendChild(p);
+  }
+  document.body.appendChild(box);setTimeout(()=>box.remove(),4800);
+}
+
+/* Accesso automatico: usa l'utente salvato oppure un profilo demo.
+   Il modulo di login resta disponibile dopo "Esci dall'account". */
+const DEMO_USER={name:'Alessandro',surname:'Rizzo',email:'alessandro@example.it'};
+let savedUser=null;
+try{savedUser=JSON.parse(localStorage.getItem(STORE+'.user')||'null');}catch(e){}
+user=(savedUser&&savedUser.email)?savedUser:DEMO_USER;
+localStorage.setItem(STORE+'.user',JSON.stringify(user));
+document.getElementById('nome').value=user.name;
+document.getElementById('cognome').value=user.surname;
+document.getElementById('email').value=user.email;
+document.getElementById('modeGreeting').textContent='Benvenuto, '+user.name+'! Scegli la modalità.';
+showScreen('modeScreen');
+</script>
+</body>
+</html>
