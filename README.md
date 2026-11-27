@@ -10,6 +10,8 @@ Applicazione web didattica in **HTML, CSS e JavaScript vanilla** (nessun framewo
 - Attestati differenziati: "Esperto del Medioevo" oppure "Esperto di Filosofia Greca".
 - **Attestato speciale** "Studioso di Storia e Filosofia" se si ottiene almeno 8/10 in entrambi i percorsi.
 - **Accesso automatico** con profilo demo; il pulsante «Esci dall'account» riporta al modulo di login.
+- Pulsante **👤 Entra come ospite** (nel login e nella schermata materie): si gioca senza inserire dati.
+- Ogni accesso parte sempre da un **cruciverba vuoto**; i progressi non vengono ripristinati automaticamente.
 - **Modalità Studio**: definizioni, teoria (10 argomenti), suggerimento, controllo, soluzione e correzione degli errori.
 - **Modalità Verifica**: timer, nessun aiuto, consegna unica, voto in decimi, elenco degli errori con spiegazione.
 - **Attestato PDF** generato in JavaScript puro se il voto è almeno 6/10, con downloading immediato.

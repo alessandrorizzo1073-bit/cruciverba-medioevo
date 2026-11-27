@@ -257,7 +257,8 @@
         <div class="err" id="emailErr">Inserisci un indirizzo e-mail corretto.</div>
       </div>
       <button class="btn gold" type="submit">Continua</button>
-      <div class="hintline">I tuoi progressi vengono salvati automaticamente in questo browser.</div>
+      <button class="btn ghost" id="guestBtn" type="button" style="width:100%;margin-top:10px">👤 Entra come ospite (senza login)</button>
+      <div class="hintline">Ogni accesso inizia da un cruciverba vuoto.</div>
     </form>
   </div>
 </section>
@@ -281,6 +282,7 @@
           <small>15 parole: Talete, Socrate, Platone, Aristotele e altri.</small>
         </button>
       </div>
+      <button class="btn ghost" id="guestFromSubject" type="button" style="margin-top:18px">👤 Entra come ospite (senza login)</button>
     </div>
   </div>
 </section>
@@ -697,6 +699,17 @@ document.getElementById('loginForm').addEventListener('submit',e=>{
   showScreen('subjectScreen');
 });
 
+function enterAsGuest(){
+  user={name:'Ospite',surname:'',email:'ospite@accademia.it'};
+  localStorage.setItem(STORE+'.user',JSON.stringify(user));
+  const greeting='Benvenuto, Ospite! Seleziona un percorso per iniziare.';
+  document.getElementById('subjectGreeting').textContent=greeting;
+  document.getElementById('modeGreeting').textContent='Benvenuto, Ospite! Scegli la modalità.';
+  showScreen('subjectScreen');
+}
+document.getElementById('guestBtn').addEventListener('click',enterAsGuest);
+document.getElementById('guestFromSubject').addEventListener('click',enterAsGuest);
+
 function chooseSubject(k){
   localStorage.setItem(STORE+'.subject',k);
   location.href='?subject='+k;
@@ -732,8 +745,8 @@ function startGame(m){
   document.querySelectorAll('.only-study').forEach(el=>el.classList.toggle('hidden',m!=='study'));
   document.querySelectorAll('.only-verify').forEach(el=>el.classList.toggle('hidden',m!=='verify'));
   showScreen('gameScreen');
-  clearGrid(); restoreProgress(); updateProgress(); hideMessage();
-  if(m==='verify')resumeTimer(savedSeconds);else stopTimer();
+  clearGrid(); resetStorage(); savedSeconds=0; updateProgress(); hideMessage();
+  if(m==='verify')startTimer();else stopTimer();
 }
 
 /* =========================================================
