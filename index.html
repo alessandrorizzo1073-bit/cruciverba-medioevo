@@ -240,7 +240,7 @@
         <div class="brand">Accademia Medievale<span>Cruciverba di storia</span></div>
       </div>
       <h1>Inizia il tuo percorso</h1>
-      <p class="sub">Inserisci i tuoi dati per accedere al cruciverba del Medioevo.</p>
+      <p class="sub">Inserisci i tuoi dati per accedere ai cruciverba di storia e filosofia.</p>
       <div class="field">
         <label for="nome">Nome</label>
         <input id="nome" type="text" placeholder="Il tuo nome" autocomplete="given-name">
@@ -262,6 +262,29 @@
   </div>
 </section>
 
+<!-- ===================== SCELTA MATERIA ===================== -->
+<section id="subjectScreen" class="screen">
+  <div class="mode-wrap">
+    <div class="mode-card">
+      <div class="logo">
+        <svg viewBox="0 0 64 74" aria-hidden="true"><path d="M32 3 L59 13 V40 C59 56 47 67 32 72 C17 67 5 56 5 40 V13 Z" fill="#142945" stroke="#c9a227" stroke-width="3"/><path d="M32 10 L52 17 V39 C52 51 44 60 32 64 C20 60 12 51 12 39 V17 Z" fill="#f6ead0" stroke="#c9a227" stroke-width="2"/><path d="M28 20 h8 v12 h12 v8 H36 v12 h-8 V40 H16 v-8 h12 Z" fill="#c9a227"/></svg>
+      </div>
+      <h1>Scegli la tua materia</h1>
+      <p id="subjectGreeting">Seleziona un percorso per iniziare.</p>
+      <div class="mode-grid">
+        <button class="mode-btn" id="subjectStoria" type="button">
+          <span class="ico">🏰</span><strong>STORIA DEL MEDIOEVO</strong>
+          <small>15 parole: feudi, cavalieri, crociate e molto altro.</small>
+        </button>
+        <button class="mode-btn" id="subjectFilosofia" type="button">
+          <span class="ico">🏛️</span><strong>FILOSOFIA GRECA</strong>
+          <small>15 parole: Talete, Socrate, Platone, Aristotele e altri.</small>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== SCELTA MODALITÀ ===================== -->
 <section id="modeScreen" class="screen">
   <div class="mode-wrap">
@@ -271,6 +294,7 @@
       </div>
       <h1>Scegli come vuoi giocare</h1>
       <p id="modeGreeting">Benvenuto!</p>
+      <p id="subjectLabel" style="font-weight:700;color:var(--brown);margin-top:-16px;margin-bottom:18px"></p>
       <div class="mode-grid">
         <button class="mode-btn" id="studyMode" type="button">
           <span class="ico">📚</span><strong>MODALITÀ STUDIO</strong>
@@ -282,6 +306,7 @@
         </button>
       </div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px">
+        <button class="btn ghost" id="changeSubjectBtn" type="button">🔄 Cambia materia</button>
         <button class="btn ghost" id="historyBtn" type="button">🗂 Storico risultati</button>
         <button class="btn ghost" id="logoutBtn2" type="button">🚪 Esci dall'account</button>
       </div>
@@ -299,6 +324,7 @@
       </div>
       <div class="user-chip">
         <span class="badge" id="userBadge"></span>
+        <span class="badge" id="subjectBadge"></span>
         <span class="badge study" id="modeBadge"></span>
         <button class="btn" id="exitBtn" type="button">Esci</button>
         <button class="btn" id="logoutBtn" type="button">🚪 Esci dall'account</button>
@@ -392,10 +418,11 @@
 <div id="printArea" aria-hidden="true"></div>
 
 <script>
+const STORE='cruciverbaMedioevo.v1';
 /* =========================================================
    1. DATI
    ========================================================= */
-const WORDS = [
+const STORIA_WORDS = [
   { word:'MEDIOEVO', clue:'Il periodo che va, per convenzione, dal 476 al 1492.',
     why:'Il Medioevo inizia convenzionalmente nel 476 con la fine dell’Impero Romano d’Occidente e finisce nel 1492 con la scoperta dell’America.' },
   { word:'FEUDALESIMO', clue:'Sistema basato sui feudi.',
@@ -428,7 +455,7 @@ const WORDS = [
     why:'Il clero era l’ordine di chi si occupava della religione: preti, monaci e vescovi pregavano e guidavano la Chiesa.' }
 ];
 
-const THEORY = [
+const STORIA_THEORY = [
   { t:'Date convenzionali del Medioevo', d:'Gli studiosi fanno iniziare il Medioevo nel 476, con la fine dell’Impero Romano d’Occidente.\nLo fanno finire nel 1492, anno della scoperta dell’America.\nSono date convenzionali: servono a dividere la storia in periodi.\nIn realtà il passaggio avvenne lentamente, non in un solo giorno.' },
   { t:'Feudalesimo', d:'Il feudalesimo è il sistema che nacque dopo la caduta dell’Impero Romano.\nIl re concedeva i feudi ai nobili, che in cambio lo aiutavano in guerra.\nOgni signore comandava sul proprio territorio e riscuoteva le tasse.\nLa società era divisa in gruppi molto diversi tra loro.' },
   { t:'Capitolare di Quierzy', d:'Il Capitolare di Quierzy fu una legge dell’anno 877.\nStabiliva che i feudi dei conti diventassero ereditari.\nI figli potevano quindi prendere il posto del padre.\nIl potere del re si indebolì e i nobili diventarono più forti.' },
@@ -440,6 +467,77 @@ const THEORY = [
   { t:'Crociate', d:'Le Crociate furono spedizioni organizzate dall’Europa verso la Terra Santa.\nI cavalieri partivano per liberare Gerusalemme.\nLa prima crociata iniziò nel 1096 e conquistò la città.\nLe crociate durarono circa due secoli e causarono molte battaglie.' },
   { t:'Cavalieri medievali', d:'I cavalieri erano guerrieri a cavallo che servivano un signore.\nPortavano armature e spade e ricevevano un feudo in cambio del loro servizio.\nDovevano essere coraggiosi e leali al proprio signore.\nErano considerati il modello del guerriero medievale.' }
 ];
+
+/* =========================================================
+   PERCORSO FILOSOFIA GRECA
+   ========================================================= */
+const FILOSOFIA_WORDS = [
+  { word:'MILETO', clue:'La città dove nacquero i primi filosofi.',
+    why:'A Mileto vissero i primi filosofi: Talete, Anassimandro e Anassimene cercarono di spiegare l’origine di tutte le cose senza ricorrere ai miti.' },
+  { word:'TALETE', clue:'Filosofo che diceva che tutto deriva dall’acqua.',
+    why:'Talete di Mileto è considerato il primo filosofo: pensava che l’acqua fosse l’elemento da cui nascevano tutte le cose.' },
+  { word:'ANASSIMANDRO', clue:'Filosofo di Mileto che cercò l’origine di tutto.',
+    why:'Anassimandro diceva che l’origine di tutte le cose fosse una realtà infinita e indeterminata, che lui chiamava "apeiron".' },
+  { word:'ANASSIMENE', clue:'Filosofo che diceva che tutto deriva dall’aria.',
+    why:'Anassimene pensava che l’aria fosse l’elemento fondamentale: condensandosi e rarefacendosi dava origine a tutte le cose.' },
+  { word:'PITAGORA', clue:'Fondatore della scuola pitagorica.',
+    why:'Pitagora fondò una scuola dove si studiavano numeri, matematica e musica: per lui il numero era l’origine di tutto.' },
+  { word:'ERACLITO', clue:'Filosofo del continuo cambiamento.',
+    why:'Eraclito diceva che "tutto scorre": nulla resta fermo, e il fuoco era per lui il simbolo del continuo trasformarsi.' },
+  { word:'PARMENIDE', clue:'Filosofo dell’essere immutabile.',
+    why:'Parmenide sosteneva che l’essere è uno, non nasce e non muore: il cambiamento che vediamo è solo apparenza.' },
+  { word:'EMPEDOCLE', clue:'Filosofo dei quattro elementi.',
+    why:'Empedocle spiegava la natura con quattro elementi: acqua, aria, terra e fuoco, mossi dall’amore e dall’odio.' },
+  { word:'ANASSAGORA', clue:'Filosofo dei semi di tutte le cose.',
+    why:'Anassagora credeva che in ogni cosa esistessero piccoli semi invisibili che determinano ciò che vediamo.' },
+  { word:'ATOMISTI', clue:'Filosofi che credevano negli atomi.',
+    why:'Gli atomisti, come Democrito, pensavano che tutto fosse formato da particelle minuscole e indivisibili chiamate atomi.' },
+  { word:'SOFISTI', clue:'Insegnanti che insegnavano a parlare e convincere.',
+    why:'I sofisti insegnavano la retorica: insegnavano a parlare bene e a convincere gli altri, senza occuparsi troppo della verità.' },
+  { word:'SOCRATE', clue:'Maestro di Platone.',
+    why:'Socrate non scrisse libri: andava in piazza a fare domande e aiutava gli altri a pensare con la propria testa. Fu il maestro di Platone.' },
+  { word:'PLATONE', clue:'Allievo di Socrate e fondatore dell’Accademia.',
+    why:'Platone fondò l’Accademia e raccolse le idee del maestro Socrate: credeva che esistesse un mondo perfetto delle idee.' },
+  { word:'ARISTOTELE', clue:'Fondatore del Liceo.',
+    why:'Aristotele fu allievo di Platone e fondò il Liceo: studiò logica, natura e politica partendo dall’osservazione della realtà.' },
+  { word:'EPICURO', clue:'Fondatore dell’epicureismo.',
+    why:'Epicuro insegnò che il bene è una vita serena, libera da dolori e paure: da lui prese nome la scuola degli epicurei.' }
+];
+
+const FILOSOFIA_THEORY = [
+  { t:'Filosofi di Mileto', d:'Nel VI secolo a.C., a Mileto, nacquero i primi filosofi occidentali.\nTalete, Anassimandro e Anassimene cercarono l’origine di tutte le cose.\nNon usarono più i miti, ma la ragione e l’osservazione.\nPer questo sono considerati i padri della filosofia.' },
+  { t:'Pitagora', d:'Pitagora visse nel VI secolo a.C. e fondò una scuola nell’Italia meridionale.\nPer lui l’origine di tutto era il numero.\nI suoi seguaci studiarono matematica, geometria e musica.\nLa scuola pitagorica univa filosofia e scienze.' },
+  { t:'Eraclito', d:'Eraclito diceva che tutto scorre e cambia continuamente.\nNulla resta fermo: anche le cose che sembrano stabili si trasformano.\nIl fuoco era per lui il simbolo di questo continuo cambiamento.\nPer questo è chiamato il filosofo del divenire.' },
+  { t:'Parmenide', d:'Parmenide pensava il contrario di Eraclito.\nSosteneva che l’essere è uno, non cambia e non può non essere.\nIl cambiamento che crediamo di vedere sarebbe solo un’illusione.\nIl suo allievo Zenone difese queste idee con famosi paradossi.' },
+  { t:'Empedocle', d:'Empedocle spiegava il mondo con quattro elementi: acqua, aria, terra e fuoco.\nGli elementi si uniscono per amore e si separano per odio.\nCosì si formano e si distruggono tutte le cose.\nLa sua idea influenzò la scienza per molti secoli.' },
+  { t:'Anassagora', d:'Anassagora diceva che in ogni cosa ci sono piccoli semi invisibili.\nQuesti semi spiegano perché una cosa è fatta in un certo modo.\nIl padrone di tutti i semi sarebbe la mente, cioè l’intelligenza ordinatrice.\nPortò la filosofia ad Atene.' },
+  { t:'Atomisti', d:'Gli atomisti, come Democrito e Leucippo, credevano negli atomi.\nGli atomi sono particelle minuscole, eterne e indivisibili.\nTutto ciò che esiste è formato da atomi e dal vuoto in cui si muovono.\nLe cose nascono e muoiono quando gli atomi si uniscono o si separano.' },
+  { t:'Sofisti', d:'I sofisti erano insegnanti che andavano da una città all’altra.\nInsegnavano a parlare bene e a convincere gli altri: la retorica.\nChiedevano denaro per le loro lezioni.\nSi occupavano soprattutto di come dire le cose, non di stabilire la verità.' },
+  { t:'Socrate', d:'Socrate visse ad Atene e non scrisse mai un libro.\nAndava in piazza e faceva domande per aiutare gli altri a pensare.\nDiceva che la cosa più importante è conoscere se stessi.\nFu condannato a morte, ma il suo pensiero sopravvisse negli scritti di Platone.' },
+  { t:'Platone', d:'Platone fu il più grande allievo di Socrate.\nFondò l’Accademia, una scuola dove si studiava filosofia e matematica.\nCredeva che oltre al mondo visibile esistesse il mondo delle idee perfette.\nNelle sue opere compare spesso il maestro Socrate mentre parla.' },
+  { t:'Aristotele', d:'Aristotele fu allievo di Platone e fondò il Liceo.\nA differenza di Platone, studiò la realtà osservando la natura.\nSi occupò di logica, biologia, etica e politica.\nLe sue idee furono studiate per secoli in Europa e nel mondo arabo.' },
+  { t:'Epicuro', d:'Epicuro fondò una scuola chiamata epicureismo.\nInsegnò che il bene è vivere sereni, senza dolori e senza paure.\nSecondo lui non bisogna temere la morte né desiderare ricchezze superflue.\nLa filosofia serviva quindi a rendere la vita più tranquilla.' }
+];
+
+/* =========================================================
+   MATERIE DISPONIBILI
+   ========================================================= */
+const SUBJECTS = {
+  storia: {
+    name:'Storia del Medioevo', emoji:'🏰',
+    heading:'Attestato di conoscenza del Medioevo', badge:'Esperto del Medioevo',
+    pdfTitle:'Cruciverba del Medioevo', WORDS:STORIA_WORDS, THEORY:STORIA_THEORY
+  },
+  filosofia: {
+    name:'Filosofia Greca', emoji:'🏛️',
+    heading:'Attestato di conoscenza della Filosofia Greca', badge:'Esperto di Filosofia Greca',
+    pdfTitle:'Cruciverba di Filosofia Greca', WORDS:FILOSOFIA_WORDS, THEORY:FILOSOFIA_THEORY
+  }
+};
+const params=new URLSearchParams(location.search);
+const subjectKey=(params.get('subject')&&SUBJECTS[params.get('subject')])?params.get('subject'):(localStorage.getItem(STORE+'.subject')||'storia');
+const DATA=SUBJECTS[subjectKey]||SUBJECTS.storia;
+const WORDS=DATA.WORDS, THEORY=DATA.THEORY;
 
 /* Configurazione EmailJS: inserisci qui le tue chiavi gratuite per inviare l'attestato.
    Servono: Public Key, Service ID, Template ID (https://www.emailjs.com/). */
@@ -576,7 +674,6 @@ THEORY.forEach(x=>{
 /* =========================================================
    4. STATO, LOGIN, MODALITÀ
    ========================================================= */
-const STORE='cruciverbaMedioevo.v1';
 let user=null, mode=null, activeWord=null, activeDir='H', checked=false, delivered=false, celebrated=false;
 let startTs=0, savedSeconds=0, timerId=null, certificate=null;
 
@@ -596,9 +693,17 @@ document.getElementById('loginForm').addEventListener('submit',e=>{
   if(!(nameOk&&surOk&&mailOk))return;
   user={name,surname,email};
   localStorage.setItem(STORE+'.user',JSON.stringify(user));
-  document.getElementById('modeGreeting').textContent='Benvenuto, '+name+'! Scegli la modalità.';
-  showScreen('modeScreen');
+  document.getElementById('subjectGreeting').textContent='Benvenuto, '+name+'! Seleziona un percorso per iniziare.';
+  showScreen('subjectScreen');
 });
+
+function chooseSubject(k){
+  localStorage.setItem(STORE+'.subject',k);
+  location.href='?subject='+k;
+}
+document.getElementById('subjectStoria').addEventListener('click',()=>chooseSubject('storia'));
+document.getElementById('subjectFilosofia').addEventListener('click',()=>chooseSubject('filosofia'));
+document.getElementById('changeSubjectBtn').addEventListener('click',()=>{location.href='?choose=1';});
 
 document.getElementById('studyMode').addEventListener('click',()=>startGame('study'));
 document.getElementById('verifyMode').addEventListener('click',()=>startGame('verify'));
@@ -606,7 +711,7 @@ document.getElementById('exitBtn').addEventListener('click',()=>{stopTimer();sho
 function logout(){
   stopTimer();
   localStorage.removeItem(STORE+'.user');
-  if(user&&mode)localStorage.removeItem(STORE+'.'+mode+'.'+user.email);
+  if(user&&mode)localStorage.removeItem(STORE+'.'+subjectKey+'.'+mode+'.'+user.email);
   user=null;mode=null;delivered=false;checked=false;celebrated=false;certificate=null;
   ['nome','cognome','email'].forEach(id=>{document.getElementById(id).value='';document.getElementById(id).classList.remove('invalid');});
   document.querySelectorAll('.err').forEach(e=>e.classList.remove('show'));
@@ -621,6 +726,7 @@ function startGame(m){
   document.getElementById('deliverBtn').disabled=false;
   document.getElementById('modeBadge').textContent=m==='study'?'📚 Studio':'📝 Verifica';
   document.getElementById('modeBadge').className='badge '+m;
+  document.getElementById('subjectBadge').textContent=DATA.emoji+' '+DATA.name;
   document.getElementById('userBadge').textContent=user.name+' '+user.surname;
   document.getElementById('statLabel').textContent=m==='study'?'Parole completate':'Parole compilate';
   document.querySelectorAll('.only-study').forEach(el=>el.classList.toggle('hidden',m!=='study'));
@@ -695,7 +801,7 @@ function updateProgress(){
   if(checked)words.forEach(w=>w.li.classList.toggle('clue-wrong',w.cells.some(c=>c.input.value&&c.input.value!==c.sol)));
   if(mode==='study'&&n===15&&!checked&&!celebrated){
     celebrated=true;confetti();
-    document.getElementById('congratsText').textContent='Hai completato tutte e 15 le parole del Medioevo.';
+    document.getElementById('congratsText').textContent='Hai completato tutte e 15 le parole di '+DATA.name+'.';
     document.getElementById('congratsDialog').showModal();
   }
 }
@@ -735,6 +841,7 @@ document.getElementById('hintBtn').addEventListener('click',()=>{
 });
 function clearWrong(){words.forEach(w=>w.li.classList.remove('clue-wrong'));}
 
+document.querySelector('#theoryDialog h2').textContent='📖 Teoria · '+DATA.name;
 document.getElementById('theoryBtn').addEventListener('click',()=>document.getElementById('theoryDialog').showModal());
 document.getElementById('closeTheory').addEventListener('click',()=>document.getElementById('theoryDialog').close());
 document.getElementById('okTheory').addEventListener('click',()=>document.getElementById('theoryDialog').close());
@@ -747,7 +854,7 @@ document.getElementById('newBtn').addEventListener('click',()=>{
 });
 
 function clearGrid(){clearStyles();cellMap.forEach(c=>{c.input.value='';stateClasses(c);});activeWord=null;activeDir='H';}
-function resetStorage(){if(user&&mode)localStorage.removeItem(STORE+'.'+mode+'.'+user.email);}
+function resetStorage(){if(user&&mode)localStorage.removeItem(STORE+'.'+subjectKey+'.'+mode+'.'+user.email);}
 
 /* =========================================================
    7. TIMER E VERIFICA
@@ -766,7 +873,7 @@ document.getElementById('deliverBtn').addEventListener('click',()=>{
   const correct=words.filter(correctWord).length, wrong=15-correct, pct=Math.round(correct/15*100);
   const vote=pct>=90?10:pct>=80?9:pct>=70?8:pct>=60?7:pct>=50?6:pct>=40?5:pct>=30?4:3;
   const passed=vote>=6;
-  saveResult({data:new Date().toLocaleDateString('it-IT'),nome:user.name+' '+user.surname,email:user.email,modalita:'Verifica',tempo:fmt(sec),percentuale:pct+'%',voto:vote+'/10'});
+  saveResult({data:new Date().toLocaleDateString('it-IT'),nome:user.name+' '+user.surname,email:user.email,materia:DATA.name,modalita:'Verifica',tempo:fmt(sec),percentuale:pct+'%',voto:vote+'/10'});
   const rd=document.getElementById('resultBody'), rf=document.getElementById('resultFoot');
   document.getElementById('resultTitle').textContent=passed?'Verifica superata!':'Risultato della verifica';
   rd.innerHTML='<div class="result-grid">'+
@@ -781,17 +888,27 @@ document.getElementById('deliverBtn').addEventListener('click',()=>{
       sbagliate.map(w=>'<li><b>'+w.num+'. '+w.word+'</b><br><span>Definizione: '+w.info.clue+'</span><br><em>Perché: '+w.info.why+'</em></li>').join('')+'</ul>';
   }
   if(passed){
-    certificate=buildCertificatePDF({name:user.name+' '+user.surname,date:new Date().toLocaleDateString('it-IT'),vote:vote,percent:pct,time:fmt(sec)});
-    rd.innerHTML+='<div class="status">🏆 <b>Esperto del Medioevo!</b> Il tuo attestato è pronto.</div><div class="status" id="mailStatus">Invio e-mail in corso…</div>';
+    certificate=buildCertificatePDF({name:user.name+' '+user.surname,date:new Date().toLocaleDateString('it-IT'),vote:vote,percent:pct,time:fmt(sec),heading:DATA.heading,badge:DATA.badge});
+    rd.innerHTML+='<div class="status">🏆 <b>'+DATA.badge+'!</b> Il tuo attestato è pronto.</div><div class="status" id="mailStatus">Invio e-mail in corso…</div>';
     rf.innerHTML='<button class="btn navy" id="downloadBtn" type="button">⬇ Scarica attestato PDF</button><button class="btn ghost" id="retryBtn" type="button">Nuova verifica</button>';
     sendCertificateEmail(certificate,{vote:vote,percent:pct,time:fmt(sec)});
+    const special=getHistory().some(r=>r.materia===SUBJECTS.storia.name&&parseInt(r.voto)>=8)&&
+                  getHistory().some(r=>r.materia===SUBJECTS.filosofia.name&&parseInt(r.voto)>=8);
+    if(special){
+      rd.innerHTML+='<div class="status">🥇 <b>Attestato speciale sbloccato:</b> hai ottenuto almeno 8/10 in entrambe le materie!</div>';
+      rf.innerHTML+='<button class="btn gold" id="specialBtn" type="button">🏅 Attestato speciale</button>';
+    }
   }else{
     rd.innerHTML+='<div class="status">📚 Non ce l’hai ancora: ripassa la teoria in Modalità Studio e riprova. Nessun attestato viene generato.</div>';
     rf.innerHTML='<button class="btn gold" id="retryBtn" type="button">Riprova</button>';
   }
   document.getElementById('resultDialog').showModal();
   document.getElementById('retryBtn').addEventListener('click',()=>{document.getElementById('resultDialog').close();newGameVerify();});
-  if(passed)document.getElementById('downloadBtn').addEventListener('click',downloadCertificate);
+  if(passed){
+    document.getElementById('downloadBtn').addEventListener('click',downloadCertificate);
+    const sp=document.getElementById('specialBtn');
+    if(sp)sp.addEventListener('click',()=>downloadPDF(buildSpecialPDF({name:user.name+' '+user.surname,date:new Date().toLocaleDateString('it-IT')}),'Attestato_speciale.pdf'));
+  }
 });
 function newGameVerify(){resetStorage();clearGrid();savedSeconds=0;delivered=false;checked=false;celebrated=false;document.getElementById('deliverBtn').disabled=false;hideMessage();updateProgress();startTimer();}
 document.getElementById('closeResult').addEventListener('click',()=>document.getElementById('resultDialog').close());
@@ -802,12 +919,12 @@ document.getElementById('closeResult').addEventListener('click',()=>document.get
 function saveProgress(){
   if(!user||!mode)return;
   const cells={};cellMap.forEach((c,k)=>{if(c.input.value)cells[k]=c.input.value;});
-  localStorage.setItem(STORE+'.'+mode+'.'+user.email,JSON.stringify({cells:cells,seconds:elapsed()}));
+  localStorage.setItem(STORE+'.'+subjectKey+'.'+mode+'.'+user.email,JSON.stringify({cells:cells,seconds:elapsed()}));
 }
 function restoreProgress(force){
   if(!user||!mode)return;
   let data=null;
-  try{data=JSON.parse(localStorage.getItem(STORE+'.'+mode+'.'+user.email)||'null');}catch(e){data=null;}
+  try{data=JSON.parse(localStorage.getItem(STORE+'.'+subjectKey+'.'+mode+'.'+user.email)||'null');}catch(e){data=null;}
   if(data&&data.cells&&!force){Object.entries(data.cells).forEach(([k,v])=>{const c=cellMap.get(k);if(c)c.input.value=v;});savedSeconds=data.seconds||0;}
   else savedSeconds=0;
 }
@@ -836,7 +953,7 @@ function buildCertificatePDF(d){
   C.push('0.08 0.16 0.27 rg 293 704 8 16 re f');
   const center=(s,size)=>Math.max(50,297-s.length*size*0.27);
   // titolo
-  C.push('BT /F2 22 Tf '+navy.join(' ')+' rg '+center('Attestato di conoscenza del Medioevo',22)+' 620 Td ('+pdfEsc('Attestato di conoscenza del Medioevo')+') Tj ET');
+  C.push('BT /F2 22 Tf '+navy.join(' ')+' rg '+center(d.heading,22)+' 620 Td ('+pdfEsc(d.heading)+') Tj ET');
   C.push('0.79 0.64 0.15 RG 2 w 120 604 m 475 604 l S');
   txt(center('ACCADEMIA MEDIEVALE',11),572,11,'ACCADEMIA MEDIEVALE','F2',gold);
   txt(120,530,15,'Studente: '+d.name,'F2',navy);
@@ -845,7 +962,7 @@ function buildCertificatePDF(d){
   txt(120,440,13,'Percentuale ottenuta: '+d.percent+'%','F1',brown);
   txt(120,410,13,'Tempo impiegato: '+d.time,'F1',brown);
   C.push('0.79 0.64 0.15 RG 1.2 w 120 388 m 475 388 l S');
-  C.push('BT /F2 26 Tf '+gold.join(' ')+' rg '+center('Esperto del Medioevo',26)+' 340 Td ('+pdfEsc('Esperto del Medioevo')+') Tj ET');
+  C.push('BT /F2 26 Tf '+gold.join(' ')+' rg '+center(d.badge,26)+' 340 Td ('+pdfEsc(d.badge)+') Tj ET');
   C.push('BT /F1 10 Tf '+brown.join(' ')+' rg 150 100 Td ('+pdfEsc('Firma: ______________________')+') Tj ET');
   C.push('BT /F1 10 Tf '+brown.join(' ')+' rg 350 100 Td ('+pdfEsc('Data: '+d.date)+') Tj ET');
   const content=C.join('\n');
@@ -868,8 +985,58 @@ function buildCertificatePDF(d){
 function downloadCertificate(){
   if(!certificate)return;
   const blob=new Blob([certificate],{type:'application/pdf'}), url=URL.createObjectURL(blob), a=document.createElement('a');
-  a.href=url;a.download='Attestato_Medioevo_'+user.name+'_'+user.surname+'.pdf';document.body.appendChild(a);a.click();a.remove();
+  a.href=url;a.download='Attestato_'+subjectKey+'_'+user.name+'_'+user.surname+'.pdf';document.body.appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+
+/* Attestato speciale: grafica esclusiva viola/oro con alloro e due stemmi */
+function buildSpecialPDF(d){
+  const C=[], navy=[0.13,0.10,0.30], gold=[0.85,0.70,0.24], cream=[0.985,0.945,0.83];
+  const txt=(x,y,size,str,font,color)=>C.push('BT /'+font+' '+size+' Tf '+color.join(' ')+' rg '+x+' '+y+' Td ('+pdfEsc(str)+') Tj ET');
+  const center=(s,size)=>Math.max(45,297-s.length*size*0.27);
+  C.push(cream.join(' ')+' rg 0 0 595 842 re f');
+  C.push(navy.join(' ')+' RG 4 w 24 24 547 794 re S');
+  C.push(gold.join(' ')+' RG 1.6 w 34 34 527 774 re S');
+  C.push(gold.join(' ')+' RG 0.7 w 40 40 515 762 re S');
+  // alloro: foglie disposte ad arco sui due lati
+  for(let i=0;i<12;i++){
+    const a=(-0.9+i*0.16), dx=Math.cos(a)*118, dy=Math.sin(a)*62;
+    C.push(gold.join(' ')+' rg '+(297-dx)+' '+(500+dy)+' 3 0 360 arc f');
+    C.push(gold.join(' ')+' rg '+(297+dx)+' '+(500+dy)+' 3 0 360 arc f');
+  }
+  // due stemmi
+  [[205,640],[389,640]].forEach(([cx,cy])=>{
+    C.push(navy.join(' ')+' rg '+cx+' '+(cy-22)+' m '+(cx+26)+' '+(cy-8)+' l '+(cx+26)+' '+(cy+14)+' l '+cx+' '+(cy+32)+' l '+(cx-26)+' '+(cy+14)+' l '+(cx-26)+' '+(cy-8)+' l h f');
+    C.push(gold.join(' ')+' rg '+(cx-3)+' '+(cy-12)+' 6 26 re f');
+    C.push(gold.join(' ')+' rg '+(cx-9)+' '+(cy-6)+' 18 6 re f');
+  });
+  txt(center('ACCADEMIA DEL SAPERE',9),748,9,'ACCADEMIA DEL SAPERE','F2',gold);
+  txt(center('Studioso di Storia e Filosofia',20),700,20,'Studioso di Storia e Filosofia','F2',navy);
+  C.push(gold.join(' ')+' RG 2 w 110 682 m 485 682 l S');
+  txt(120,590,15,'Studente: '+d.name,'F2',navy);
+  txt(120,560,13,'Data: '+d.date,'F1',gold);
+  txt(120,520,12,'Storia del Medioevo: 8/10 o superiore','F1',navy);
+  txt(120,496,12,'Filosofia Greca: 8/10 o superiore','F1',navy);
+  C.push(gold.join(' ')+' RG 1.2 w 110 470 m 485 470 l S');
+  txt(center('Eccellenza nello studio',22),420,22,'Eccellenza nello studio','F2',gold);
+  txt(150,110,10,'Firma: ______________________','F1',navy);
+  txt(390,110,10,'Data: '+d.date,'F1',navy);
+  const content=C.join('\n');
+  const objs=[
+    '<< /Type /Catalog /Pages 2 0 R >>',
+    '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+    '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>',
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>',
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>',
+    '<< /Length '+content.length+' >>\nstream\n'+content+'\nendstream'
+  ];
+  let pdf='%PDF-1.4\n',off=[0];
+  objs.forEach((o,i)=>{off[i+1]=pdf.length;pdf+=(i+1)+' 0 obj\n'+o+'\nendobj\n';});
+  const xref=pdf.length;
+  pdf+='xref\n0 '+(objs.length+1)+'\n0000000000 65535 f \n';
+  for(let i=1;i<=objs.length;i++)pdf+=String(off[i]).padStart(10,'0')+' 00000 n \n';
+  pdf+='trailer\n<< /Size '+(objs.length+1)+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF';
+  return pdf;
 }
 async function sendCertificateEmail(pdf,data){
   const st=document.getElementById('mailStatus');
@@ -912,8 +1079,8 @@ async function renderHistory(){
   const badge='<p style="margin:0 0 10px;font-size:11px;color:var(--muted)">Fonte: <b>'+source+'</b></p>';
   if(!h.length){body.innerHTML=badge+'<p style="font-size:14px;color:var(--muted)">Nessun risultato salvato. Completa una verifica per vedere qui lo storico.</p>';return;}
   body.innerHTML=badge+'<div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:12.5px">'+
-    '<thead><tr style="background:var(--parchment)"><th style="padding:7px;text-align:left">Data</th><th style="padding:7px;text-align:left">Studente</th><th style="padding:7px;text-align:left">Modalità</th><th style="padding:7px">Tempo</th><th style="padding:7px">%</th><th style="padding:7px">Voto</th></tr></thead><tbody>'+
-    h.map(r=>'<tr style="border-bottom:1px solid var(--line)"><td style="padding:7px">'+(r.data||'')+'</td><td style="padding:7px">'+(r.nome||'')+'<br><small style="color:var(--muted)">'+(r.email||'')+'</small></td><td style="padding:7px">'+(r.modalita||'')+'</td><td style="padding:7px;text-align:center">'+(r.tempo||'')+'</td><td style="padding:7px;text-align:center">'+(r.percentuale||'')+'</td><td style="padding:7px;text-align:center;font-weight:700">'+(r.voto||'')+'</td></tr>').join('')+
+    '<thead><tr style="background:var(--parchment)"><th style="padding:7px;text-align:left">Data</th><th style="padding:7px;text-align:left">Studente</th><th style="padding:7px;text-align:left">Materia</th><th style="padding:7px;text-align:left">Modalità</th><th style="padding:7px">Tempo</th><th style="padding:7px">%</th><th style="padding:7px">Voto</th></tr></thead><tbody>'+
+    h.map(r=>'<tr style="border-bottom:1px solid var(--line)"><td style="padding:7px">'+(r.data||'')+'</td><td style="padding:7px">'+(r.nome||'')+'<br><small style="color:var(--muted)">'+(r.email||'')+'</small></td><td style="padding:7px">'+(r.materia||'')+'</td><td style="padding:7px">'+(r.modalita||'')+'</td><td style="padding:7px;text-align:center">'+(r.tempo||'')+'</td><td style="padding:7px;text-align:center">'+(r.percentuale||'')+'</td><td style="padding:7px;text-align:center;font-weight:700">'+(r.voto||'')+'</td></tr>').join('')+
     '</tbody></table></div>';
 }
 document.getElementById('historyBtn').addEventListener('click',()=>{renderHistory();document.getElementById('historyDialog').showModal();});
@@ -945,7 +1112,7 @@ function buildCrosswordPDF(withSolutions){
   C.push('1 1 1 rg 0 0 595 842 re f');
   C.push('0.08 0.16 0.27 RG 2 w 28 28 539 786 re S');
   C.push('0.79 0.64 0.15 RG 1 w 34 34 527 774 re S');
-  C.push('BT /F2 20 Tf '+navy.join(' ')+' rg 297 790 Td ('+pdfEsc('Cruciverba del Medioevo')+') Tj ET');
+  C.push('BT /F2 20 Tf '+navy.join(' ')+' rg '+(297-DATA.pdfTitle.length*20*0.27)+' 790 Td ('+pdfEsc(DATA.pdfTitle)+') Tj ET');
   text(297,769,10,'Studente: '+student,'F1',navy);
   text(297,753,9,'Data: '+date,'F1',gray);
   C.push('0.79 0.64 0.15 RG 1.2 w 70 742 m 525 742 l S');
@@ -1003,18 +1170,18 @@ function buildPrintArea(withSolutions){
   g+='</div>';
   const section=(title,list)=>'<div><h3>'+title+'</h3><ol>'+list.map(w=>'<li>'+w.info.clue+'</li>').join('')+'</ol></div>';
   document.getElementById('printArea').innerHTML=
-    '<div class="print-head"><h1>Cruciverba del Medioevo</h1><p>Studente: '+student+' &nbsp;·&nbsp; Data: '+date+'</p></div>'+g+
+    '<div class="print-head"><h1>'+DATA.pdfTitle+'</h1><p>Studente: '+student+' &nbsp;·&nbsp; Data: '+date+'</p></div>'+g+
     '<div class="print-clues">'+section('Orizzontali',words.filter(w=>w.dir==='H'))+section('Verticali',words.filter(w=>w.dir==='V'))+'</div>'+
     '<div class="print-foot"><span>Nome: ______________________</span><span>Cognome: ______________________</span><span>Classe: __________</span></div>';
 }
 document.getElementById('printBtn').addEventListener('click',()=>{buildPrintArea(false);setTimeout(()=>window.print(),100);});
 document.getElementById('pdfBtn').addEventListener('click',()=>{
-  if(mode==='verify'){downloadPDF(buildCrosswordPDF(false),'Cruciverba_Medioevo_vuoto.pdf');return;}
+  if(mode==='verify'){downloadPDF(buildCrosswordPDF(false),'Cruciverba_'+subjectKey+'_vuoto.pdf');return;}
   document.getElementById('pdfDialog').showModal();
 });
 document.getElementById('closePdf').addEventListener('click',()=>document.getElementById('pdfDialog').close());
-document.getElementById('pdfEmpty').addEventListener('click',()=>{downloadPDF(buildCrosswordPDF(false),'Cruciverba_Medioevo_vuoto.pdf');document.getElementById('pdfDialog').close();});
-document.getElementById('pdfSolved').addEventListener('click',()=>{downloadPDF(buildCrosswordPDF(true),'Cruciverba_Medioevo_soluzioni.pdf');document.getElementById('pdfDialog').close();});
+document.getElementById('pdfEmpty').addEventListener('click',()=>{downloadPDF(buildCrosswordPDF(false),'Cruciverba_'+subjectKey+'_vuoto.pdf');document.getElementById('pdfDialog').close();});
+document.getElementById('pdfSolved').addEventListener('click',()=>{downloadPDF(buildCrosswordPDF(true),'Cruciverba_'+subjectKey+'_soluzioni.pdf');document.getElementById('pdfDialog').close();});
 
 /* =========================================================
    12. EFFETTI
@@ -1040,8 +1207,12 @@ localStorage.setItem(STORE+'.user',JSON.stringify(user));
 document.getElementById('nome').value=user.name;
 document.getElementById('cognome').value=user.surname;
 document.getElementById('email').value=user.email;
+document.getElementById('subjectGreeting').textContent='Benvenuto, '+user.name+'! Seleziona un percorso per iniziare.';
 document.getElementById('modeGreeting').textContent='Benvenuto, '+user.name+'! Scegli la modalità.';
-showScreen('modeScreen');
+document.getElementById('subjectLabel').textContent=DATA.emoji+' Percorso selezionato: '+DATA.name;
+document.title='Cruciverba · '+DATA.name+' · Accademia del Sapere';
+const hasSubject=Boolean(params.get('subject')||localStorage.getItem(STORE+'.subject'));
+showScreen(params.get('choose')==='1'||!hasSubject?'subjectScreen':'modeScreen');
 </script>
 </body>
 </html>

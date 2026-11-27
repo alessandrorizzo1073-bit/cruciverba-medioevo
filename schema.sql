@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS risultati (
   data TEXT NOT NULL,
   nome TEXT NOT NULL,
   email TEXT NOT NULL,
+  materia TEXT NOT NULL,
   modalita TEXT NOT NULL,
   tempo TEXT NOT NULL,
   percentuale TEXT NOT NULL,

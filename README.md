@@ -4,7 +4,11 @@ Applicazione web didattica in **HTML, CSS e JavaScript vanilla** (nessun framewo
 
 ## Contenuto
 
-- Cruciverba generato automaticamente con **15 parole** del programma di Medioevo.
+- **Scelta della materia** dopo il login: 🏰 Storia del Medioevo oppure 🏛️ Filosofia Greca.
+- Due cruciverba indipendenti, ciascuno con **15 parole** e definizioni semplici.
+- Percorsi: 15 parole e 10 argomenti di teoria per il Medioevo; 15 parole e 12 argomenti di teoria per la Filosofia Greca.
+- Attestati differenziati: "Esperto del Medioevo" oppure "Esperto di Filosofia Greca".
+- **Attestato speciale** "Studioso di Storia e Filosofia" se si ottiene almeno 8/10 in entrambi i percorsi.
 - **Accesso automatico** con profilo demo; il pulsante «Esci dall'account» riporta al modulo di login.
 - **Modalità Studio**: definizioni, teoria (10 argomenti), suggerimento, controllo, soluzione e correzione degli errori.
 - **Modalità Verifica**: timer, nessun aiuto, consegna unica, voto in decimi, elenco degli errori con spiegazione.

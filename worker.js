@@ -36,13 +36,13 @@ export default {
       if (url.pathname === '/api/risultati') {
         if (request.method === 'POST') {
           const body = await request.json();
-          const fields = ['data', 'nome', 'email', 'modalita', 'tempo', 'percentuale', 'voto'];
+          const fields = ['data', 'nome', 'email', 'materia', 'modalita', 'tempo', 'percentuale', 'voto'];
           if (!body || !fields.every(f => typeof body[f] === 'string' && body[f].trim())) {
             return json({ error: 'Dati incompleti' }, 400);
           }
           const values = fields.map(f => String(body[f]).slice(0, 200));
           await env.DB.prepare(
-            'INSERT INTO risultati (data, nome, email, modalita, tempo, percentuale, voto) VALUES (?, ?, ?, ?, ?, ?, ?)'
+            'INSERT INTO risultati (data, nome, email, materia, modalita, tempo, percentuale, voto) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
           ).bind(...values).run();
           return json({ ok: true }, 201);
         }
@@ -51,7 +51,7 @@ export default {
           const email = url.searchParams.get('email');
           if (!email) return json({ error: 'Parametro email obbligatorio' }, 400);
           const { results } = await env.DB.prepare(
-            'SELECT data, nome, email, modalita, tempo, percentuale, voto FROM risultati WHERE email = ? ORDER BY id DESC LIMIT 100'
+            'SELECT data, nome, email, materia, modalita, tempo, percentuale, voto FROM risultati WHERE email = ? ORDER BY id DESC LIMIT 100'
           ).bind(email).all();
           return json({ risultati: results });
         }
