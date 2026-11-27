@@ -319,7 +319,6 @@
         <button class="btn ghost only-study" id="solutionBtn" type="button">Mostra soluzione</button>
         <button class="btn ghost only-study" id="theoryBtn" type="button">📖 Teoria</button>
         <button class="btn gold only-verify hidden" id="deliverBtn" type="button">Consegna verifica</button>
-        <button class="btn ghost" id="autoBtn" type="button" title="Inserisce da solo tutte le parole">🤖 Auto-completa: ON</button>
         <button class="btn ghost" id="printBtn" type="button" title="Stampa il cruciverba in A4">🖨️ Stampa</button>
         <button class="btn ghost" id="pdfBtn" type="button" title="Scarica il cruciverba in PDF">📄 Scarica PDF</button>
         <button class="btn ghost" id="newBtn" type="button">Nuova partita</button>
@@ -567,7 +566,7 @@ THEORY.forEach(x=>{
    4. STATO, LOGIN, MODALITÀ
    ========================================================= */
 const STORE='cruciverbaMedioevo.v1';
-let user=null, mode=null, activeWord=null, activeDir='H', checked=false, delivered=false, celebrated=false, autoComplete=true;
+let user=null, mode=null, activeWord=null, activeDir='H', checked=false, delivered=false, celebrated=false;
 let startTs=0, savedSeconds=0, timerId=null, certificate=null;
 
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));}
@@ -618,7 +617,6 @@ function startGame(m){
   showScreen('gameScreen');
   clearGrid(); restoreProgress(); updateProgress(); hideMessage();
   if(m==='verify')resumeTimer(savedSeconds);else stopTimer();
-  if(autoComplete)setTimeout(autoFill,350);
 }
 
 /* =========================================================
@@ -734,35 +732,11 @@ document.getElementById('okCongrats').addEventListener('click',()=>document.getE
 document.getElementById('newBtn').addEventListener('click',()=>{
   resetStorage();clearGrid();delivered=false;checked=false;celebrated=false;hideMessage();updateProgress();
   if(mode==='verify')startTimer();
-  message(autoComplete?'Nuova partita: compilazione automatica in corso…':'Nuova partita iniziata. Buon lavoro!','info');
-  if(autoComplete)setTimeout(autoFill,250);
+  message('Nuova partita iniziata. Buon lavoro!','info');
 });
 
 function clearGrid(){clearStyles();cellMap.forEach(c=>{c.input.value='';stateClasses(c);});activeWord=null;activeDir='H';}
 function resetStorage(){if(user&&mode)localStorage.removeItem(STORE+'.'+mode+'.'+user.email);}
-
-/* Compilazione automatica (modalità demo) */
-function autoFill(){
-  if(!user||!mode||delivered)return;
-  const list=[];
-  words.forEach(w=>w.cells.forEach(c=>{if(list.indexOf(c)<0)list.push(c);}));
-  let i=0;
-  const id=setInterval(()=>{
-    if(i>=list.length){
-      clearInterval(id);
-      if(mode==='verify'&&!delivered)document.getElementById('deliverBtn').click();
-      return;
-    }
-    const c=list[i++];
-    c.input.value=c.sol;stateClasses(c);c.el.classList.add('revealed');
-    saveProgress();updateProgress();
-  },14);
-}
-document.getElementById('autoBtn').addEventListener('click',()=>{
-  autoComplete=!autoComplete;
-  document.getElementById('autoBtn').textContent='🤖 Auto-completa: '+(autoComplete?'ON':'OFF');
-  message(autoComplete?'Compilazione automatica attivata.':'Compilazione automatica disattivata: ora puoi giocare manualmente.','info');
-});
 
 /* =========================================================
    7. TIMER E VERIFICA

@@ -9,8 +9,9 @@ Applicazione web didattica in **HTML, CSS e JavaScript vanilla** (nessun framewo
 - **Modalità Studio**: definizioni, teoria (10 argomenti), suggerimento, controllo, soluzione e correzione degli errori.
 - **Modalità Verifica**: timer, nessun aiuto, consegna unica, voto in decimi, elenco degli errori con spiegazione.
 - **Attestato PDF** generato in JavaScript puro se il voto è almeno 6/10, con downloading immediato.
+- **PDF stampabile A4**: 🖨️ Stampa (ottimizzata per A4, senza interfaccia) e 📄 Scarica PDF (vuoto, oppure con soluzioni solo in Modalità Studio).
+- **Storico risultati** locale con nome, e-mail, data, modalità, tempo, percentuale e voto.
 - **Invio e-mail** tramite EmailJS (REST API via `fetch`, senza SDK).
-- Modalità **Auto-completa** attiva di default: compila da sola la griglia (disattivabile dal pulsante 🤖).
 - Salvataggio automatico dei progressi in `localStorage`.
 
 ## Pubblicazione (GitHub Pages)
